@@ -19,37 +19,15 @@ enum class TokenType : unsigned short int
 class Token : public IToStringInterface
 {
 public:
-    // this destructor will help mark this Token class as abstract
-    virtual ~Token() = 0;
+    Token(std::string _value, TokenType _tokenType);
+    Token(TokenType _tokenType, std::string _value);
 
-    virtual std::string ToString();
-    virtual TokenType GetTokenType();
-
-protected:
-    TokenType tokenType;
-};
-
-class IntegerValueToken : public Token
-{
-public:
-    IntegerValueToken(int _value, TokenType _tokenType = TokenType::INTEGER);
-    // overriding IToStringInterface
-    virtual std::string ToString();
-    int GetValue();
-
-private:
-    int value;
-};
-
-class StringValueToken : public Token
-{
-public:
-    StringValueToken(std::string _value, TokenType _tokenType);
-    // overriding IToStringInterface
-    virtual std::string ToString();
+    std::string ToString();
+    TokenType GetTokenType();
     std::string GetValue();
 
 private:
+    TokenType tokenType;
     std::string value;
 };
 
@@ -57,7 +35,7 @@ class Lexer final
 {
 public:
     // construct the Lexer instance with program as text
-    Lexer(std::string text);
+    Lexer(std::string _text);
     // this needes to return Tokens with different value types
     // this will be called by Parser
     Token* GetNextToken();
@@ -68,7 +46,13 @@ private:
     void Advance();
     void SkipWhitespace();
     
-    int RetrieveInteger();
+    std::string RetrieveIntegerString();
+
+    std::string text;
+    int position;
+    char currentChar;
+
+    bool isFinished;
 };
 
 std::string GetEnumName(TokenType tokenType);

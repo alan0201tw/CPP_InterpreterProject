@@ -1,51 +1,137 @@
 #include "Lexer.hpp"
 
-// For Debugging
 #include <iostream>
 #include <sstream>
+#include <string>
+
+#include <stdexcept>
 
 // helping mark Token as abstract class
-Token::~Token() {}
+//Token::~Token() {}
+
+Token::Token(std::string _value, TokenType _tokenType)
+{
+    value = _value;
+    tokenType = _tokenType;
+}
+
+Token::Token(TokenType _tokenType, std::string _value)
+{
+    value = _value;
+    tokenType = _tokenType;
+}
 
 TokenType Token::GetTokenType()
 {
     return this->tokenType;
 }
 
+std::string Token::GetValue()
+{
+    return this->value;
+}
+
 std::string Token::ToString()
 {
     std::stringstream s;
     // don't use + operator!
-    s << "Token with TokenType = " << GetEnumName(tokenType);
+    s << "Token with TokenType = " << GetEnumName(tokenType) << ", TokenValue = " << value;
     return s.str();
 }
 
-IntegerValueToken::IntegerValueToken(int _value, TokenType _tokenType)
+Lexer::Lexer(std::string _text)
 {
-    value = _value;
-    tokenType = _tokenType;
+    text = _text;
+
+    position = 0;
+    currentChar = text[position];
+    isFinished = false;
 }
 
-std::string IntegerValueToken::ToString()
+void Lexer::Advance()
 {
-    std::stringstream s;
-    // don't use + operator!
-    s << "IntegerValueToken with TokenType = " << GetEnumName(tokenType) << ", TokenValue = " << value;
-    return s.str();
+    position++;
+    if(position >= (int)text.length())
+    {
+        isFinished = true;
+    }
+    else
+    {
+        currentChar = text[position];
+    }
 }
 
-StringValueToken::StringValueToken(std::string _value, TokenType _tokenType)
+void Lexer::SkipWhitespace()
 {
-    value = _value;
-    tokenType = _tokenType;
+    while(isFinished == false && currentChar == ' ')
+    {
+        Advance();
+    }
 }
 
-std::string StringValueToken::ToString()
+std::string Lexer::RetrieveIntegerString()
 {
-    std::stringstream s;
-    // don't use + operator!
-    s << "StringValueToken with TokenType = " << GetEnumName(tokenType) << ", TokenValue = " << value;
-    return s.str();
+    std::string result = "";
+    while(isFinished == false && isdigit(currentChar))
+    {
+        result += currentChar;
+        Advance();
+    }
+
+    return result;
+}
+
+Token* Lexer::GetNextToken()
+{
+    while(isFinished == false)
+    {
+        // deal with all kinds of Tokens
+        if(currentChar == ' ')
+        {
+            SkipWhitespace();
+        }
+
+        if(isdigit(currentChar))
+        {
+            return new Token(TokenType::INTEGER, RetrieveIntegerString());
+        }
+        else if(currentChar == '+')
+        {
+            Advance();
+            return new Token(TokenType::PLUS, "+");
+        }
+        else if(currentChar == '-')
+        {
+            Advance();
+            return new Token(TokenType::MINUS, "-");
+        }
+        else if(currentChar == '*')
+        {
+            Advance();
+            return new Token(TokenType::MUL, "*");
+        }
+        else if(currentChar == '/')
+        {
+            Advance();
+            return new Token(TokenType::DIV, "/");
+        }
+        else if(currentChar == '(')
+        {
+            Advance();
+            return new Token(TokenType::LPAREN, "(");
+        }
+        else if(currentChar == ')')
+        {
+            Advance();
+            return new Token(TokenType::RPAREN, ")");
+        }
+        else
+        {
+            throw std::runtime_error("Get unexpected char : " + currentChar);
+        }
+    }
+
+    return new Token(TokenType::EOF_TOKEN, '\0');
 }
 
 // a helper function that turns tokenType to string

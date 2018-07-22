@@ -1,13 +1,13 @@
 CC = g++
 CFLAGS = -Wall
 
-all: Interpreter.exe
+all: main.exe
+# to test without particular component, remove dependency by removing *.o when linking
+main.exe: main.cpp Parser.o Lexer.o Interpreter.o
+	$(CC) $(CFLAGS) -o $@ Parser.o Lexer.o Interpreter.o main.cpp
 
-Interpreter.exe: Parser.o Lexer.o Interpreter.o
-	$(CC) $(CFLAGS) -o $@ Parser.o Lexer.o Interpreter.o
-
-Interpreter.o: Interpreter.cpp Parser/Parser.hpp Lexer/Lexer.hpp
-	$(CC) $(CFLAGS) -o $@ -c Interpreter.cpp
+Interpreter.o: Parser/Parser.hpp Lexer/Lexer.hpp
+	$(CC) $(CFLAGS) -o $@ -c Interpreter/Interpreter.cpp
 
 Parser.o: Parser/Parser.cpp Parser/Parser.hpp
 	$(CC) $(CFLAGS) -o $@ -c Parser/Parser.cpp
@@ -16,4 +16,4 @@ Lexer.o: Lexer/Lexer.cpp Lexer/Lexer.hpp BasicInterface/DebugUtility.hpp
 	$(CC) $(CFLAGS) -o $@ -c Lexer/Lexer.cpp
 
 clean:
-	del Interpreter.exe *.o
+	del main.exe *.o
