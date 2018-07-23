@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall
+CFLAGS = -Wall -std=c++11
 
 all: main.exe
 # to test without particular component, remove dependency by removing *.o when linking

@@ -131,7 +131,7 @@ Token* Lexer::GetNextToken()
         }
     }
 
-    return new Token(TokenType::EOF_TOKEN, '\0');
+    return new Token(TokenType::EOF_TOKEN, "\0");
 }
 
 // a helper function that turns tokenType to string
