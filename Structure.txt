@@ -33,38 +33,6 @@ Target Usage
 
 Possible Structure : 
 
-template <class T>
-T Visit()
-{
-    return ConvertString<T>(value);
-}
-
-template <typename T>
-T ConvertString( const std::string &data )
-{
-  if( !data.empty( ))
-  {
-    T ret;
-    std::istringstream iss( data );
-    if( data.find( "0x" ) != std::string::npos )
-    {
-      iss >> std::hex >> ret;
-    }
-    else
-    {
-      iss >> std::dec >> ret;
-    }
-
-    if( iss.fail( ))
-    {
-      std::cout << "Convert error: cannot convert string '" << data << "' to value" << std::endl;
-      return T( );
-    }
-    return ret;
-  }
-  return T( );
-}
-
 TypeClass : 
 
     TypeBase > Void Type, Int type, Float type... etc
