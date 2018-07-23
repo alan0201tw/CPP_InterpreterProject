@@ -127,7 +127,7 @@ Token* Lexer::GetNextToken()
         }
         else
         {
-            throw std::runtime_error("Get unexpected char : " + currentChar);
+            throw std::runtime_error(std::string("Get unexpected char : ") + currentChar);
         }
     }
 
