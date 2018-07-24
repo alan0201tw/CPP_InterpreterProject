@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
     std::cout << token->ToString() << std::endl;
     */
     
-    std::string program = "7 + 5 + 67";
+    std::string program = "7 *(2+881) /(10-100) * 10";
     Lexer* lexer = new Lexer(program);
     Parser* parser = new Parser(lexer);
     Interpreter* interpreter = new Interpreter(parser);

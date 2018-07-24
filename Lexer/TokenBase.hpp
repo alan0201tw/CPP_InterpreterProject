@@ -36,6 +36,9 @@ public:
     
     virtual std::string ToString() = 0;
     virtual TokenBase* Add(TokenBase* token) = 0;
+    virtual TokenBase* Minus(TokenBase* token) = 0;
+    virtual TokenBase* Multiply(TokenBase* token) = 0;
+    virtual TokenBase* Divide(TokenBase* token) = 0;
 };
 
 class BoolToken;
@@ -72,7 +75,7 @@ public:
         return s.str();
     }
 
-    virtual TokenBase* Add(TokenBase* token) 
+    virtual TokenBase* Add(TokenBase* token)
     {
         TokenValueType type = token->GetValueType();
         
@@ -84,6 +87,75 @@ public:
                 int myInt = *((int*)GetData());
                 
                 int result = myInt + otherInt;
+
+                TokenBase* newToken = new IntegerToken(result);
+                return newToken;
+            }
+            default:
+            {
+                return nullptr;
+            }
+        }
+    }
+
+    virtual TokenBase* Minus(TokenBase* token)
+    {
+        TokenValueType type = token->GetValueType();
+        
+        switch(type)
+        {
+            case TokenValueType::Integer:
+            {
+                int otherInt = *((int*)token->GetData());
+                int myInt = *((int*)GetData());
+                
+                int result = myInt - otherInt;
+
+                TokenBase* newToken = new IntegerToken(result);
+                return newToken;
+            }
+            default:
+            {
+                return nullptr;
+            }
+        }
+    }
+
+    virtual TokenBase* Multiply(TokenBase* token)
+    {
+        TokenValueType type = token->GetValueType();
+        
+        switch(type)
+        {
+            case TokenValueType::Integer:
+            {
+                int otherInt = *((int*)token->GetData());
+                int myInt = *((int*)GetData());
+                
+                int result = myInt * otherInt;
+
+                TokenBase* newToken = new IntegerToken(result);
+                return newToken;
+            }
+            default:
+            {
+                return nullptr;
+            }
+        }
+    }
+
+    virtual TokenBase* Divide(TokenBase* token)
+    {
+        TokenValueType type = token->GetValueType();
+        
+        switch(type)
+        {
+            case TokenValueType::Integer:
+            {
+                int otherInt = *((int*)token->GetData());
+                int myInt = *((int*)GetData());
+                
+                int result = myInt / otherInt;
 
                 TokenBase* newToken = new IntegerToken(result);
                 return newToken;
@@ -146,6 +218,43 @@ public:
             }
         }
     }
+    // string token do not support subtraction(minus operator)
+    virtual TokenBase* Minus(TokenBase* token) 
+    {
+        return nullptr;
+    }
+    // string token do not support subtraction(minus operator)
+    virtual TokenBase* Multiply(TokenBase* token) 
+    {
+        TokenValueType type = token->GetValueType();
+        
+        switch(type)
+        {
+            case TokenValueType::Integer:
+            {
+                std::string result = "";
+                std::string myString = *((std::string*)GetData());
+
+                int otherInt = *((int*)token->GetData());
+                for(int i = 0; i < otherInt ; i++)
+                {
+                    result += myString;
+                }
+
+                TokenBase* newToken = new StringToken(result);
+                return newToken;
+            }
+            default:
+            {
+                return nullptr;
+            }
+        }
+    }
+    // string token do not support subtraction(minus operator)
+    virtual TokenBase* Divide(TokenBase* token) 
+    {
+        return nullptr;
+    }
 };
 
 class EOF_Token final : public TokenBase
@@ -168,6 +277,21 @@ public:
     }
 
     virtual TokenBase* Add(TokenBase* token) 
+    {
+        return nullptr;
+    }
+
+    virtual TokenBase* Minus(TokenBase* token) 
+    {
+        return nullptr;
+    }
+
+    virtual TokenBase* Multiply(TokenBase* token) 
+    {
+        return nullptr;
+    }
+
+    virtual TokenBase* Divide(TokenBase* token) 
     {
         return nullptr;
     }

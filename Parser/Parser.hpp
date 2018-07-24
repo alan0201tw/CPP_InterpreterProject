@@ -46,6 +46,9 @@ public:
     Parser(Lexer* _lexer);
     // Parse the tokens created by lexer to create a abstract syntax tree
     AST_Node* Parse();
+    
+    // Utility Function
+    static bool IsStringTokenSame(TokenBase* token, std::string _value);
 
 private:
     Lexer* lexer;
@@ -59,9 +62,6 @@ private:
     AST_Node* Factor();
     AST_Node* Term();
     AST_Node* Expr();
-
-    // Utility Function
-    bool IsStringTokenSame(TokenBase* token, std::string _value);
 };
 
 #endif

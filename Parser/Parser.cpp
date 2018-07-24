@@ -21,7 +21,28 @@ TokenBase* BinaryOperator::Visit()
     if(valueType == TokenValueType::String)
     {
         // deal with numeric operators
-        return left->Visit()->Add(right->Visit());
+        if(Parser::IsStringTokenSame(operatorToken, "+"))
+        {
+            return left->Visit()->Add(right->Visit());
+        }
+        else if(Parser::IsStringTokenSame(operatorToken, "-"))
+        {
+            return left->Visit()->Minus(right->Visit());
+        }
+        else if(Parser::IsStringTokenSame(operatorToken, "*"))
+        {
+            return left->Visit()->Multiply(right->Visit());
+        }
+        else if(Parser::IsStringTokenSame(operatorToken, "/"))
+        {
+            return left->Visit()->Divide(right->Visit());
+        }
+        else
+        {
+            // error
+            std::cout << "Error : BinaryOperator::Visit cannot find good operation for token : " << operatorToken->ToString();
+            return nullptr;
+        }
     }
     else
     {
