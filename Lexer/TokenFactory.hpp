@@ -12,13 +12,11 @@ public:
     }
     static TokenBase* MakeToken(std::string _value)
     {
-        //return new StringToken();
-        return nullptr;
+        return new StringToken(_value);
     }
     static TokenBase* MakeEOF_Token()
     {
-        //return new EOF_Token();
-        return nullptr;
+        return new EOF_Token();
     }
     //TokenBase* MakeToken(float);
 };

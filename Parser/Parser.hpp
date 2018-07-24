@@ -51,14 +51,17 @@ private:
     Lexer* lexer;
     // utility function
     void ThrowException(std::string message);
-    void Eat(TokenValueType tokenType);
+    void Eat(TokenValueType tokenType, std::string _specialChar = "");
 
     TokenBase* currentToken;
 
     // Grammar Variables and its definition
-    //AST_Node* Factor();
-    //AST_Node* Term();
-    //AST_Node* Expr();
+    AST_Node* Factor();
+    AST_Node* Term();
+    AST_Node* Expr();
+
+    // Utility Function
+    bool IsStringTokenSame(TokenBase* token, std::string _value);
 };
 
 #endif

@@ -11,6 +11,11 @@ class Interpreter
 {
 public:
     Interpreter(Parser* _parser);
+
+    TokenBase* Interpret();
+
+private:
+    Parser* parser;
 };
 
 #endif
