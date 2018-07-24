@@ -4,13 +4,16 @@
 #include <sstream>
 //debugging
 #include <iostream>
+// don't include header, just declare a Factory class
+class TokenFactory;
 
 enum class TokenValueType : unsigned short int
 {
     Integer,
     Float,
     Bool,
-    String
+    String,
+    EOF_Token
 };
 
 class TokenBase
@@ -40,7 +43,7 @@ class IntegerToken;
 
 class IntegerToken final : public TokenBase
 {
-public:
+private:
     IntegerToken(int _value)
     {
         // IMPORTANT : this local tmpVar need to be new-ed, otherwise the same address might
@@ -52,7 +55,10 @@ public:
 
         std::cout << "IntegerToken Constructor, *_value = " << _value << ", dataPtr = " << data << std::endl;
     }
-    //friend class TokenFactory;
+
+public:
+    friend class TokenFactory;
+
     virtual std::string ToString()
     {
         std::stringstream s;

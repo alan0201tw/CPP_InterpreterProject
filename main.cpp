@@ -2,15 +2,16 @@
 #include "Parser/Parser.hpp"
 #include "Interpreter/Interpreter.hpp"
 
+#include "Lexer/TokenFactory.hpp"
+
 #include <iostream>
 
 using namespace std;
 
 int main(int argc, char* argv[])
 {
-    //cout << (int)TokenType::INTEGER << endl;
+    TokenBase* token = TokenFactory::MakeToken(5);
+    token = token->Add(TokenFactory::MakeToken(88123));
 
-    //Token<char>* token = new Token<char>('(' , TokenType::LPAREN);
-    Token* token = new Token("1139", TokenType::INTEGER);
-    cout << token->ToString() << endl;
+    std::cout << token->ToString() << std::endl;
 }

@@ -1,4 +1,6 @@
 #include "Lexer.hpp"
+#include "TokenBase.hpp"
+#include "TokenFactory.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -8,36 +10,6 @@
 
 // helping mark Token as abstract class
 //Token::~Token() {}
-
-Token::Token(std::string _value, TokenType _tokenType)
-{
-    value = _value;
-    tokenType = _tokenType;
-}
-
-Token::Token(TokenType _tokenType, std::string _value)
-{
-    value = _value;
-    tokenType = _tokenType;
-}
-
-TokenType Token::GetTokenType()
-{
-    return this->tokenType;
-}
-
-std::string Token::GetValue()
-{
-    return this->value;
-}
-
-std::string Token::ToString()
-{
-    std::stringstream s;
-    // don't use + operator!
-    s << "Token with TokenType = " << GetEnumName(tokenType) << ", TokenValue = " << value;
-    return s.str();
-}
 
 Lexer::Lexer(std::string _text)
 {
@@ -69,7 +41,7 @@ void Lexer::SkipWhitespace()
     }
 }
 
-std::string Lexer::RetrieveIntegerString()
+int Lexer::RetrieveInteger()
 {
     std::string result = "";
     while(isFinished == false && isdigit(currentChar))
@@ -78,10 +50,10 @@ std::string Lexer::RetrieveIntegerString()
         Advance();
     }
 
-    return result;
+    return std::stoi(result);
 }
 
-Token* Lexer::GetNextToken()
+TokenBase* Lexer::GetNextToken()
 {
     while(isFinished == false)
     {
@@ -93,37 +65,38 @@ Token* Lexer::GetNextToken()
 
         if(isdigit(currentChar))
         {
-            return new Token(TokenType::INTEGER, RetrieveIntegerString());
+            return TokenFactory::MakeToken(RetrieveInteger());
+            //return new Token(TokenValueType::INTEGER, RetrieveIntegerString());
         }
         else if(currentChar == '+')
         {
             Advance();
-            return new Token(TokenType::PLUS, "+");
+            return TokenFactory::MakeToken(std::string("+"));
         }
         else if(currentChar == '-')
         {
             Advance();
-            return new Token(TokenType::MINUS, "-");
+            return TokenFactory::MakeToken(std::string("-"));
         }
         else if(currentChar == '*')
         {
             Advance();
-            return new Token(TokenType::MUL, "*");
+            return TokenFactory::MakeToken(std::string("*"));
         }
         else if(currentChar == '/')
         {
             Advance();
-            return new Token(TokenType::DIV, "/");
+            return TokenFactory::MakeToken(std::string("/"));
         }
         else if(currentChar == '(')
         {
             Advance();
-            return new Token(TokenType::LPAREN, "(");
+            return TokenFactory::MakeToken(std::string("("));
         }
         else if(currentChar == ')')
         {
             Advance();
-            return new Token(TokenType::RPAREN, ")");
+            return TokenFactory::MakeToken(std::string(")"));
         }
         else
         {
@@ -131,27 +104,7 @@ Token* Lexer::GetNextToken()
         }
     }
 
-    return new Token(TokenType::EOF_TOKEN, "\0");
-}
-
-// a helper function that turns tokenType to string
-std::string GetEnumName(TokenType tokenType)
-{
-    switch(tokenType)
-    {
-        case TokenType::INTEGER :
-            return "INTEGER";
-        case TokenType::PLUS :
-        case TokenType::MINUS :
-        case TokenType::MUL :
-        case TokenType::DIV :
-            return "MATH_OPERATOR";
-        case TokenType::LPAREN :
-        case TokenType::RPAREN :
-            return "PARENTHESIS";
-        default :
-            return "EOF_TOKEN";
-    }
+    return TokenFactory::MakeEOF_Token();
 }
 
 // No need to call this TemporaryFunction() function,

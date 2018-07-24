@@ -2,34 +2,9 @@
 #define PASCAL_LEXER
 
 #include "../BasicInterface/DebugUtility.hpp"
+#include "TokenBase.hpp"
+
 #include <string>
-
-enum class TokenType : unsigned short int
-{
-    INTEGER,
-    PLUS,
-    MINUS,
-    MUL,
-    DIV,
-    LPAREN,
-    RPAREN,
-    EOF_TOKEN
-};
-
-class Token : public IToStringInterface
-{
-public:
-    Token(std::string _value, TokenType _tokenType);
-    Token(TokenType _tokenType, std::string _value);
-
-    std::string ToString();
-    TokenType GetTokenType();
-    std::string GetValue();
-
-private:
-    TokenType tokenType;
-    std::string value;
-};
 
 class Lexer final
 {
@@ -38,7 +13,7 @@ public:
     Lexer(std::string _text);
     // this needes to return Tokens with different value types
     // this will be called by Parser
-    Token* GetNextToken();
+    TokenBase* GetNextToken();
 
 private:
     // utility function
@@ -46,7 +21,7 @@ private:
     void Advance();
     void SkipWhitespace();
     
-    std::string RetrieveIntegerString();
+    int RetrieveInteger();
 
     std::string text;
     int position;
@@ -54,6 +29,4 @@ private:
 
     bool isFinished;
 };
-
-std::string GetEnumName(TokenType tokenType);
 #endif

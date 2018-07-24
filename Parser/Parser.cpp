@@ -6,25 +6,14 @@
 // helping mark AST_Node as abstract class
 AST_Node::~AST_Node() {}
 
-int BinaryOperator::Visit()
+TokenBase* BinaryOperator::Visit()
 {
     // define return value base on + - * /
-    TokenType tokenType = this->operatorToken->GetTokenType();
-    if(tokenType == TokenType::PLUS)
+    TokenValueType valueType = this->operatorToken->GetValueType();
+    if(valueType == TokenValueType::String)
     {
-        return left->Visit() + right->Visit();
-    }
-    else if(tokenType == TokenType::MINUS)
-    {
-        return left->Visit() - right->Visit();
-    }
-    else if(tokenType == TokenType::MUL)
-    {
-        return left->Visit() * right->Visit();
-    }
-    else if(tokenType == TokenType::DIV)
-    {
-        return left->Visit() / right->Visit();
+        // deal with numeric operators
+        return left->Visit()->Add(right->Visit());
     }
     else
     {
@@ -32,10 +21,10 @@ int BinaryOperator::Visit()
     }
 }
 
-int ValueNode::Visit()
+TokenBase* ValueNode::Visit()
 {
-    // convert string to int
-    return std::stoi(this->token->GetValue());
+    // return the token in the AST_Node
+    return this->token;
 }
 
 Parser::Parser(Lexer* _lexer)
@@ -49,7 +38,7 @@ AST_Node* Parser::Parse()
     //AST_Node* node = Expr();
     AST_Node* node = nullptr;
 
-    if(currentToken->GetTokenType() != TokenType::EOF_TOKEN)
+    if(currentToken->GetValueType() != TokenValueType::EOF_Token)
     {
         ThrowException("Not getting EOF_TOKEN after doing parsing! Current Token info is : " + currentToken->ToString() );
     }

@@ -2,41 +2,42 @@
 #define PASCAL_PARSER
 
 #include "../Lexer/Lexer.hpp"
+#include "../Lexer/TokenBase.hpp"
 
 class AST_Node
 {
 public:
     // mark AST_Node as abstract class
     virtual ~AST_Node() = 0;
-    virtual int Visit() = 0;
+    virtual TokenBase* Visit() = 0;
 };
 
 class BinaryOperator final : public AST_Node
 {
 public:
-    BinaryOperator(AST_Node* _left, Token* _operatorToken, AST_Node* _right);
+    BinaryOperator(AST_Node* _left, TokenBase* _operatorToken, AST_Node* _right);
     AST_Node* LeftNode();
     AST_Node* RightNode();
-    Token* OperatorToken();
+    TokenBase* OperatorToken();
 
-    virtual int Visit();
+    virtual TokenBase* Visit();
 
 private:
     AST_Node* left;
     AST_Node* right;
-    Token* operatorToken;
+    TokenBase* operatorToken;
 };
 
 class ValueNode final : public AST_Node
 {
 public:
-    ValueNode(Token* _token);
-    Token* ValueToken();
+    ValueNode(TokenBase* _token);
+    TokenBase* ValueToken();
 
-    virtual int Visit();
+    virtual TokenBase* Visit();
 
 private:
-    Token* token;
+    TokenBase* token;
 };
 
 class Parser final
@@ -50,9 +51,9 @@ private:
     Lexer* lexer;
     // utility function
     void ThrowException(std::string message);
-    void Eat(TokenType tokenType);
+    void Eat(TokenValueType tokenType);
 
-    Token* currentToken;
+    TokenBase* currentToken;
 
     // Grammar Variables and its definition
     //AST_Node* Factor();
