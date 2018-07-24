@@ -19,9 +19,11 @@ private:
     // utility function
     void ThrowException();
     void Advance();
+    char Peek();
     void SkipWhitespace();
     
     int RetrieveInteger();
+    std::string RetrieveConstString();
 
     std::string text;
     int position;

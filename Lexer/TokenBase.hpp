@@ -5,8 +5,24 @@
 #include <string>
 //debugging
 #include <iostream>
-// don't include header, just declare a Factory class
-class TokenFactory;
+
+// declare classes
+class TokenBase;
+
+class IntegerToken;
+class BoolToken;
+class FloatToken;
+class StringToken;
+class EOF_Token;
+
+// Token Factory to create all Tokens here
+class TokenFactory
+{
+public:
+    static TokenBase* MakeToken(int _value);
+    static TokenBase* MakeToken(std::string _value);
+    static TokenBase* MakeEOF_Token();
+};
 
 enum class TokenValueType : unsigned short int
 {
@@ -41,260 +57,54 @@ public:
     virtual TokenBase* Divide(TokenBase* token) = 0;
 };
 
-class BoolToken;
-class FloatToken;
-class StringToken;
-class IntegerToken;
-
 class IntegerToken final : public TokenBase
 {
 private:
-    IntegerToken(int _value)
-    {
-        // IMPORTANT : this local tmpVar need to be new-ed, otherwise the same address might
-        // be used accross multiple constructor, makeing data corrupted
-        int* tmpVar = new int(_value);
-        data = (void*)tmpVar;
-
-        valueType = TokenValueType::Integer;
-
-        std::cout << "IntegerToken Constructor, *_value = " << _value << ", dataPtr = " << data << std::endl;
-    }
+    IntegerToken(int _value);
 
 public:
     friend class TokenFactory;
 
-    virtual std::string ToString()
-    {
-        std::stringstream s;
-        // don't use + operator!
-        int myInt = *((int*)GetData());
+    virtual std::string ToString();
 
-        s << "IntegerToken with data = " << myInt;
-
-        return s.str();
-    }
-
-    virtual TokenBase* Add(TokenBase* token)
-    {
-        TokenValueType type = token->GetValueType();
-        
-        switch(type)
-        {
-            case TokenValueType::Integer:
-            {
-                int otherInt = *((int*)token->GetData());
-                int myInt = *((int*)GetData());
-                
-                int result = myInt + otherInt;
-
-                TokenBase* newToken = new IntegerToken(result);
-                return newToken;
-            }
-            default:
-            {
-                return nullptr;
-            }
-        }
-    }
-
-    virtual TokenBase* Minus(TokenBase* token)
-    {
-        TokenValueType type = token->GetValueType();
-        
-        switch(type)
-        {
-            case TokenValueType::Integer:
-            {
-                int otherInt = *((int*)token->GetData());
-                int myInt = *((int*)GetData());
-                
-                int result = myInt - otherInt;
-
-                TokenBase* newToken = new IntegerToken(result);
-                return newToken;
-            }
-            default:
-            {
-                return nullptr;
-            }
-        }
-    }
-
-    virtual TokenBase* Multiply(TokenBase* token)
-    {
-        TokenValueType type = token->GetValueType();
-        
-        switch(type)
-        {
-            case TokenValueType::Integer:
-            {
-                int otherInt = *((int*)token->GetData());
-                int myInt = *((int*)GetData());
-                
-                int result = myInt * otherInt;
-
-                TokenBase* newToken = new IntegerToken(result);
-                return newToken;
-            }
-            default:
-            {
-                return nullptr;
-            }
-        }
-    }
-
-    virtual TokenBase* Divide(TokenBase* token)
-    {
-        TokenValueType type = token->GetValueType();
-        
-        switch(type)
-        {
-            case TokenValueType::Integer:
-            {
-                int otherInt = *((int*)token->GetData());
-                int myInt = *((int*)GetData());
-                
-                int result = myInt / otherInt;
-
-                TokenBase* newToken = new IntegerToken(result);
-                return newToken;
-            }
-            default:
-            {
-                return nullptr;
-            }
-        }
-    }
+    virtual TokenBase* Add(TokenBase* token);
+    virtual TokenBase* Minus(TokenBase* token);
+    virtual TokenBase* Multiply(TokenBase* token);
+    virtual TokenBase* Divide(TokenBase* token);
 };
 
 class StringToken final : public TokenBase
 {
 private:
-    StringToken(std::string _value)
-    {
-        // IMPORTANT : this local tmpVar need to be new-ed, otherwise the same address might
-        // be used accross multiple constructor, makeing data corrupted
-        std::string* tmpVar = new std::string(_value);
-        data = (void*)tmpVar;
-
-        valueType = TokenValueType::String;
-
-        std::cout << "StringToken Constructor, *_value = " << _value << ", dataPtr = " << data << std::endl;
-    }
+    StringToken(std::string _value);
 public:
     friend class TokenFactory;
 
-    virtual std::string ToString()
-    {
-        std::stringstream s;
-        // don't use + operator!
-        std::string myString = *((std::string*)GetData());
-        s << "StringToken with data = " << myString;
+    virtual std::string ToString();
 
-        return s.str();
-    }
-
-    virtual TokenBase* Add(TokenBase* token) 
-    {
-        TokenValueType type = token->GetValueType();
-        
-        switch(type)
-        {
-            case TokenValueType::Integer:
-            {
-                std::string otherString = token->ToString();
-
-                std::string myString = *((std::string*)GetData());
-                
-                std::string result = myString + otherString;
-
-                TokenBase* newToken = new StringToken(result);
-                return newToken;
-            }
-            default:
-            {
-                return nullptr;
-            }
-        }
-    }
+    virtual TokenBase* Add(TokenBase* token);
     // string token do not support subtraction(minus operator)
-    virtual TokenBase* Minus(TokenBase* token) 
-    {
-        return nullptr;
-    }
-    // string token do not support subtraction(minus operator)
-    virtual TokenBase* Multiply(TokenBase* token) 
-    {
-        TokenValueType type = token->GetValueType();
-        
-        switch(type)
-        {
-            case TokenValueType::Integer:
-            {
-                std::string result = "";
-                std::string myString = *((std::string*)GetData());
-
-                int otherInt = *((int*)token->GetData());
-                for(int i = 0; i < otherInt ; i++)
-                {
-                    result += myString;
-                }
-
-                TokenBase* newToken = new StringToken(result);
-                return newToken;
-            }
-            default:
-            {
-                return nullptr;
-            }
-        }
-    }
-    // string token do not support subtraction(minus operator)
-    virtual TokenBase* Divide(TokenBase* token) 
-    {
-        return nullptr;
-    }
+    virtual TokenBase* Minus(TokenBase* token);
+    // string token do not support Multiply
+    virtual TokenBase* Multiply(TokenBase* token);
+    // string token do not support Divide
+    virtual TokenBase* Divide(TokenBase* token);
 };
 
 class EOF_Token final : public TokenBase
 {
 private:
-    EOF_Token()
-    {
-        data = nullptr;
-        valueType = TokenValueType::EOF_Token;
-
-        std::cout << "EOF_Token Constructor" << std::endl;
-    }
+    EOF_Token();
     
 public:
     friend class TokenFactory;
 
-    virtual std::string ToString()
-    {
-        return std::string("EOF_Token String");
-    }
+    virtual std::string ToString();
 
-    virtual TokenBase* Add(TokenBase* token) 
-    {
-        return nullptr;
-    }
-
-    virtual TokenBase* Minus(TokenBase* token) 
-    {
-        return nullptr;
-    }
-
-    virtual TokenBase* Multiply(TokenBase* token) 
-    {
-        return nullptr;
-    }
-
-    virtual TokenBase* Divide(TokenBase* token) 
-    {
-        return nullptr;
-    }
+    virtual TokenBase* Add(TokenBase* token);
+    virtual TokenBase* Minus(TokenBase* token);
+    virtual TokenBase* Multiply(TokenBase* token);
+    virtual TokenBase* Divide(TokenBase* token);
 };
 
 #endif

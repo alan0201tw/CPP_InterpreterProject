@@ -1,6 +1,5 @@
 #include "Lexer.hpp"
 #include "TokenBase.hpp"
-#include "TokenFactory.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -33,6 +32,19 @@ void Lexer::Advance()
     }
 }
 
+char Lexer::Peek()
+{
+    int peekPosition = position + 1;
+    if(peekPosition >= (int)text.length())
+    {
+        return '\0';
+    }
+    else
+    {
+        return text[peekPosition];
+    }
+}
+
 void Lexer::SkipWhitespace()
 {
     while(isFinished == false && currentChar == ' ')
@@ -53,6 +65,19 @@ int Lexer::RetrieveInteger()
     return std::stoi(result);
 }
 
+std::string Lexer::RetrieveConstString()
+{
+    std::string result = "";
+    while(isFinished == false && currentChar != '\"')
+    {
+        //std::cout << Peek() << std::endl;
+        result += currentChar;
+        Advance();
+    }
+    //std::cout << result << std::endl;
+    return result;
+}
+
 TokenBase* Lexer::GetNextToken()
 {
     while(isFinished == false)
@@ -67,6 +92,12 @@ TokenBase* Lexer::GetNextToken()
         {
             return TokenFactory::MakeToken(RetrieveInteger());
             //return new Token(TokenValueType::INTEGER, RetrieveIntegerString());
+        }
+        // use this shitty way to avoid unwanted character in source code
+        // the start of a string can only be letter or underline
+        else if(isalpha(currentChar) || currentChar == '_')
+        {
+            return TokenFactory::MakeToken(RetrieveConstString());
         }
         else if(currentChar == '+')
         {
@@ -98,9 +129,14 @@ TokenBase* Lexer::GetNextToken()
             Advance();
             return TokenFactory::MakeToken(std::string(")"));
         }
+        else if(currentChar == '\"')
+        {
+            Advance();
+            return TokenFactory::MakeToken(std::string("\""));
+        }
         else
         {
-            throw std::runtime_error(std::string("Get unexpected char : ") + currentChar);
+            throw std::runtime_error(std::string("Lexer.cpp : Get unexpected char : ") + currentChar);
         }
     }
 

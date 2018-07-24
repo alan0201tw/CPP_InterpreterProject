@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 #include "../Lexer/Lexer.hpp"
-#include "../Lexer/TokenFactory.hpp"
+#include "../Lexer/TokenBase.hpp"
 
 // helping mark AST_Node as abstract class
 AST_Node::~AST_Node() {}
@@ -18,31 +18,34 @@ TokenBase* BinaryOperator::Visit()
 {
     // define return value base on + - * /
     TokenValueType valueType = this->operatorToken->GetValueType();
+
+    TokenBase* returningToken = nullptr;
     if(valueType == TokenValueType::String)
     {
         // deal with numeric operators
         if(Parser::IsStringTokenSame(operatorToken, "+"))
         {
-            return left->Visit()->Add(right->Visit());
+            returningToken = left->Visit()->Add(right->Visit());
         }
         else if(Parser::IsStringTokenSame(operatorToken, "-"))
         {
-            return left->Visit()->Minus(right->Visit());
+            returningToken = left->Visit()->Minus(right->Visit());
         }
         else if(Parser::IsStringTokenSame(operatorToken, "*"))
         {
-            return left->Visit()->Multiply(right->Visit());
+            returningToken = left->Visit()->Multiply(right->Visit());
         }
         else if(Parser::IsStringTokenSame(operatorToken, "/"))
         {
-            return left->Visit()->Divide(right->Visit());
+            returningToken = left->Visit()->Divide(right->Visit());
         }
         else
         {
             // error
             std::cout << "Error : BinaryOperator::Visit cannot find good operation for token : " << operatorToken->ToString();
-            return nullptr;
         }
+        std::cout << "Returning : " << returningToken->ToString() << std::endl;
+        return returningToken;
     }
     else
     {
@@ -74,7 +77,7 @@ AST_Node* Parser::Parse()
 
     if(currentToken->GetValueType() != TokenValueType::EOF_Token)
     {
-        ThrowException("Not getting EOF_TOKEN after doing parsing! Current Token info is : " + currentToken->ToString() );
+        ThrowException("Parser.cpp : Not getting EOF_TOKEN after doing parsing! Current Token info is : " + currentToken->ToString() );
     }
 
     return node;
@@ -95,10 +98,15 @@ void Parser::Eat(TokenValueType tokenType, std::string _specialChar)
         if(valueType == TokenValueType::String)
         {
             std::string tokenStringData = *(std::string*)currentToken->GetData();
-            // the content is the same
-            if( tokenStringData.compare(_specialChar) == 0 )
+            // the content is the same, or specialChar is empty, 
+            // in this case, don't do special character check
+            if( tokenStringData.compare(_specialChar) == 0 || _specialChar.empty())
             {
                 currentToken = lexer->GetNextToken();
+            }
+            else
+            {
+                ThrowException(std::string("Error when trying to eat a string token : expecting " + _specialChar + ", but we have " + tokenStringData));
             }
         }
         else
@@ -116,6 +124,7 @@ AST_Node* Parser::Factor()
 {
     TokenBase* token = currentToken;
     TokenValueType valueType = token->GetValueType();
+    // this factor is an integer
     if(valueType == TokenValueType::Integer)
     {
         Eat(TokenValueType::Integer);
@@ -123,12 +132,24 @@ AST_Node* Parser::Factor()
     }
     else if(valueType == TokenValueType::String)
     {
+        // this factor is an ( Expr )
         std::string stringData = *(std::string*)currentToken->GetData();
         if(stringData.compare("(") == 0)
         {
             Eat(TokenValueType::String, "(");
             AST_Node* node = Expr();
             Eat(TokenValueType::String, ")");
+
+            return node;
+        }
+        // this factor is an " string "
+        if(stringData.compare("\"") == 0)
+        {
+            Eat(TokenValueType::String, "\"");
+            // after eating the first ", current token will be a string token
+            AST_Node* node = new ValueNode(currentToken);
+            Eat(TokenValueType::String, "");
+            Eat(TokenValueType::String, "\"");
 
             return node;
         }
