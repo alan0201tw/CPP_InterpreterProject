@@ -5,7 +5,7 @@ EOF_Token::EOF_Token()
     data = nullptr;
     valueType = TokenValueType::EOF_Token;
 
-    std::cout << "EOF_Token Constructor" << std::endl;
+    //std::cout << "EOF_Token Constructor" << std::endl;
 }
 
 std::string EOF_Token::ToString()

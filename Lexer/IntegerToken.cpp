@@ -9,7 +9,7 @@ IntegerToken::IntegerToken(int _value)
 
     valueType = TokenValueType::Integer;
 
-    std::cout << "IntegerToken Constructor, *_value = " << _value << ", dataPtr = " << data << std::endl;
+    //std::cout << "IntegerToken Constructor, *_value = " << _value << ", dataPtr = " << data << std::endl;
 }
 
 std::string IntegerToken::ToString()
@@ -47,7 +47,7 @@ TokenBase* IntegerToken::Add(TokenBase* token)
             
             std::string result = myString + otherString;
 
-            std::cout << "myString = " << myString << ", otherString = " << otherString << std::endl;
+            //std::cout << "myString = " << myString << ", otherString = " << otherString << std::endl;
 
             return TokenFactory::MakeToken(result);
         }

@@ -10,7 +10,7 @@ StringToken::StringToken(std::string _value)
 
     valueType = TokenValueType::String;
 
-    std::cout << "StringToken Constructor, *_value = " << _value << ", dataPtr = " << data << std::endl;
+    //std::cout << "StringToken Constructor, *_value = " << _value << ", dataPtr = " << data << std::endl;
 }
 
 std::string StringToken::ToString()
@@ -75,6 +75,11 @@ TokenBase* StringToken::Multiply(TokenBase* token)
             std::string myString = *((std::string*)GetData());
 
             int otherInt = *((int*)token->GetData());
+            if(otherInt < 0)
+            {
+                std::cout << "StringToken using * operator with negative Integer" << std::endl;
+            }
+
             for(int i = 0; i < otherInt ; i++)
             {
                 result += myString;

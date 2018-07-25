@@ -28,6 +28,20 @@ private:
     TokenBase* operatorToken;
 };
 
+class UnaryOperator final : public AST_Node
+{
+public:
+    UnaryOperator(TokenBase* _operatorToken, AST_Node* _expr);
+    AST_Node* Expr();
+    TokenBase* OperatrToken();
+
+    virtual TokenBase* Visit();
+
+private:
+    AST_Node* expr;
+    TokenBase* operatorToken;
+};
+
 class ValueNode final : public AST_Node
 {
 public:
