@@ -11,26 +11,26 @@ main.exe: main.cpp Parser.o Lexer.o Interpreter.o EOF_Token.o IntegerToken.o Str
 test.exe: main.cpp Parser.o Lexer.o Interpreter.o EOF_Token.o IntegerToken.o StringToken.o TokenFactory.o
 	$(CC) $(CFLAGS) -o $@ Parser.o Lexer.o Interpreter.o .\_UnitTests\UnitTest1.cpp EOF_Token.o IntegerToken.o StringToken.o TokenFactory.o
 
-Interpreter.o: Parser/Parser.hpp Lexer/Lexer.hpp
-	$(CC) $(CFLAGS) -o $@ -c Interpreter/Interpreter.cpp
+Interpreter.o:
+	$(CC) $(CFLAGS) -o $@ -c src/Interpreter.cpp
 
-Parser.o: Parser/Parser.cpp Parser/Parser.hpp
-	$(CC) $(CFLAGS) -o $@ -c Parser/Parser.cpp
+Parser.o:
+	$(CC) $(CFLAGS) -o $@ -c src/Parser.cpp
 
-Lexer.o: Lexer/Lexer.cpp Lexer/Lexer.hpp BasicInterface/DebugUtility.hpp
-	$(CC) $(CFLAGS) -o $@ -c Lexer/Lexer.cpp
+Lexer.o:
+	$(CC) $(CFLAGS) -o $@ -c src/Lexer.cpp
 
-EOF_Token.o: Lexer/EOF_Token.cpp
-	$(CC) $(CFLAGS) -o $@ -c Lexer/EOF_Token.cpp
+EOF_Token.o:
+	$(CC) $(CFLAGS) -o $@ -c src/EOF_Token.cpp
 
-IntegerToken.o: Lexer/IntegerToken.cpp
-	$(CC) $(CFLAGS) -o $@ -c Lexer/IntegerToken.cpp
+IntegerToken.o:
+	$(CC) $(CFLAGS) -o $@ -c src/IntegerToken.cpp
 
-StringToken.o: Lexer/StringToken.cpp
-	$(CC) $(CFLAGS) -o $@ -c Lexer/StringToken.cpp
+StringToken.o:
+	$(CC) $(CFLAGS) -o $@ -c src/StringToken.cpp
 
-TokenFactory.o: Lexer/TokenFactory.cpp
-	$(CC) $(CFLAGS) -o $@ -c Lexer/TokenFactory.cpp
+TokenFactory.o:
+	$(CC) $(CFLAGS) -o $@ -c src/TokenFactory.cpp
 
 clean:
 	del *.exe *.o

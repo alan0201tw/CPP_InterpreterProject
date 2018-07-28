@@ -1,9 +1,9 @@
-#include "Interpreter.hpp"
+#include "../include/Interpreter.hpp"
 
-#include "../Lexer/Lexer.hpp"
-#include "../Parser/Parser.hpp"
+#include "../include/Lexer.hpp"
+#include "../include/Parser.hpp"
 
-#include "Interpreter.hpp"
+#include "../include/Interpreter.hpp"
 
 Interpreter::Interpreter(Parser* _parser)
 {

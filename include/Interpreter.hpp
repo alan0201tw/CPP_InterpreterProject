@@ -5,7 +5,7 @@
 #include <typeindex>
 #include <typeinfo>
 
-#include "../Parser/Parser.hpp"
+#include "Parser.hpp"
 
 class Interpreter
 {

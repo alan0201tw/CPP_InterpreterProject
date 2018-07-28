@@ -1,5 +1,5 @@
-#include "Lexer.hpp"
-#include "TokenBase.hpp"
+#include "../include/Lexer.hpp"
+#include "../include/TokenBase.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -17,6 +17,8 @@ Lexer::Lexer(std::string _text)
     position = 0;
     currentChar = text[position];
     isFinished = false;
+    // 0 for idle, 1 for starting to read, 2 for finish reading
+    ReadStringState = 0;
 }
 
 void Lexer::Advance()
@@ -95,6 +97,13 @@ TokenBase* Lexer::GetNextToken()
 {
     while(isFinished == false)
     {
+        if(ReadStringState == 1)
+        {
+            TokenBase* token = TokenFactory::MakeToken(RetrieveConstString());
+            ReadStringState = 2;
+            return token;
+        }
+
         // deal with all kinds of Tokens
         if(currentChar == ' ')
         {
@@ -152,6 +161,15 @@ TokenBase* Lexer::GetNextToken()
         else if(currentChar == '\"')
         {
             Advance();
+            // change reading string state
+            if(ReadStringState == 0)
+            {
+                ReadStringState = 1;
+            }
+            else if(ReadStringState == 2)
+            {
+                ReadStringState = 0;
+            }
             return TokenFactory::MakeToken(std::string("\""));
         }
         else

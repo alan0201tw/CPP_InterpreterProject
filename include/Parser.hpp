@@ -1,8 +1,8 @@
 #ifndef PASCAL_PARSER
 #define PASCAL_PARSER
 
-#include "../Lexer/Lexer.hpp"
-#include "../Lexer/TokenBase.hpp"
+#include "Lexer.hpp"
+#include "TokenBase.hpp"
 
 #include <vector>
 #include <map>

@@ -1,8 +1,8 @@
-#include "Lexer/Lexer.hpp"
-#include "Parser/Parser.hpp"
-#include "Interpreter/Interpreter.hpp"
+#include "./include/Lexer.hpp"
+#include "./include/Parser.hpp"
+#include "./include/Interpreter.hpp"
 
-#include "Lexer/TokenBase.hpp"
+#include "./include/TokenBase.hpp"
 
 #include <iostream>
 #include <fstream>

@@ -1,7 +1,7 @@
 #ifndef PASCAL_LEXER
 #define PASCAL_LEXER
 
-#include "../BasicInterface/DebugUtility.hpp"
+#include "DebugUtility.hpp"
 #include "TokenBase.hpp"
 
 #include <string>
@@ -39,5 +39,6 @@ private:
     char currentChar;
 
     bool isFinished;
+    int ReadStringState;
 };
 #endif
