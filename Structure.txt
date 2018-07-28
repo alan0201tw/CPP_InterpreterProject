@@ -62,3 +62,9 @@ IntValue : ValueBase
 }
 
 FloatValue
+
+Note :
+
+    If trying to read float values, try this approach : 
+        GetNumericString() > Get(".") > GetNumericString()
+        then combine these strings to make a float string

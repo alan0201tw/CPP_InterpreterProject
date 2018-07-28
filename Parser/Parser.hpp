@@ -4,6 +4,9 @@
 #include "../Lexer/Lexer.hpp"
 #include "../Lexer/TokenBase.hpp"
 
+#include <vector>
+#include <map>
+
 class AST_Node
 {
 public:
@@ -12,13 +15,21 @@ public:
     virtual TokenBase* Visit() = 0;
 };
 
+class CompoundNode final : public AST_Node
+{
+public:
+    CompoundNode(std::vector<AST_Node*> _childrenNodes);
+
+    virtual TokenBase* Visit();
+
+private:
+    std::vector<AST_Node*> childrenNodes;
+};
+
 class BinaryOperator final : public AST_Node
 {
 public:
     BinaryOperator(AST_Node* _left, TokenBase* _operatorToken, AST_Node* _right);
-    AST_Node* LeftNode();
-    AST_Node* RightNode();
-    TokenBase* OperatorToken();
 
     virtual TokenBase* Visit();
 
@@ -32,8 +43,6 @@ class UnaryOperator final : public AST_Node
 {
 public:
     UnaryOperator(TokenBase* _operatorToken, AST_Node* _expr);
-    AST_Node* Expr();
-    TokenBase* OperatrToken();
 
     virtual TokenBase* Visit();
 
@@ -46,7 +55,31 @@ class ValueNode final : public AST_Node
 {
 public:
     ValueNode(TokenBase* _token);
-    TokenBase* ValueToken();
+
+    virtual TokenBase* Visit();
+
+private:
+    TokenBase* token;
+};
+
+class AssignNode final : public AST_Node
+{
+public:
+    AssignNode(AST_Node* _variable, TokenBase* _operatorToken, AST_Node* _value);
+
+    virtual TokenBase* Visit();
+
+private:
+    AST_Node* variable;
+    AST_Node* value;
+    TokenBase* operatorToken;
+};
+
+// The VariableNode is constructed out of ID token.
+class VariableNode final : public AST_Node
+{
+public:
+    VariableNode(TokenBase* _token);
 
     virtual TokenBase* Visit();
 
@@ -62,12 +95,17 @@ public:
     AST_Node* Parse();
     
     // Utility Function
+    static void ThrowException(std::string message);
     static bool IsStringTokenSame(TokenBase* token, std::string _value);
+    static std::string GetStringTokenValue(TokenBase* token);
+    // variables in program
+    // use ID ( identifier, variable names ) to get Token
+
+    // each time an value assignment happens, free old token and make a new one
+    static std::map <std::string, TokenBase*> variablesMap;
 
 private:
     Lexer* lexer;
-    // utility function
-    void ThrowException(std::string message);
     void Eat(TokenValueType tokenType, std::string _specialChar = "");
 
     TokenBase* currentToken;

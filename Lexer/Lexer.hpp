@@ -5,6 +5,7 @@
 #include "TokenBase.hpp"
 
 #include <string>
+#include <vector>
 
 class Lexer final
 {
@@ -21,9 +22,17 @@ private:
     void Advance();
     char Peek();
     void SkipWhitespace();
-    
+    // for getting constant values
     int RetrieveInteger();
     std::string RetrieveConstString();
+    // for recognizing keywords and variable names
+    TokenBase* GetTokenById();
+
+    // use this to define keywords
+    std::vector<std::string> ReservedKeyWords = 
+    {
+        "BEGIN", "END"
+    };
 
     std::string text;
     int position;

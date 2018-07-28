@@ -78,6 +78,19 @@ std::string Lexer::RetrieveConstString()
     return result;
 }
 
+TokenBase* Lexer::GetTokenById()
+{
+    std::string result = "";
+    while(isFinished == false && isalnum(currentChar))
+    {
+        result += currentChar;
+        Advance();
+    }
+    // this result is identifier
+    TokenBase* token = TokenFactory::MakeToken(result);
+    return token;
+}
+
 TokenBase* Lexer::GetNextToken()
 {
     while(isFinished == false)
@@ -95,9 +108,16 @@ TokenBase* Lexer::GetNextToken()
         }
         // use this shitty way to avoid unwanted character in source code
         // the start of a string can only be letter or underline
+        // this StringToken can be either a const string value, or a keyword
         else if(isalpha(currentChar) || currentChar == '_')
         {
             return TokenFactory::MakeToken(RetrieveConstString());
+        }
+        else if(currentChar == ':' && Peek() == '=')
+        {
+            Advance();
+            Advance();
+            return TokenFactory::MakeToken(std::string(":="));
         }
         else if(currentChar == '+')
         {

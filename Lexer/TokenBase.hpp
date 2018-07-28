@@ -8,11 +8,14 @@
 
 // declare classes
 class TokenBase;
-
+// data token
 class IntegerToken;
 class BoolToken;
 class FloatToken;
 class StringToken;
+// identifier token
+//class ID_Token;
+
 class EOF_Token;
 
 // Token Factory to create all Tokens here
@@ -41,6 +44,7 @@ protected:
     TokenValueType valueType;
     
 public:
+
     void* GetData()
     {
         return data;
@@ -49,7 +53,9 @@ public:
     {
         return valueType;
     }
-    
+    // for safe deleting tokens
+    //virtual ~TokenBase() = 0;
+
     virtual std::string ToString() = 0;
     virtual TokenBase* Add(TokenBase* token) = 0;
     virtual TokenBase* Minus(TokenBase* token) = 0;

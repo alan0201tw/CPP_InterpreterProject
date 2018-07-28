@@ -7,6 +7,22 @@
 // helping mark AST_Node as abstract class
 AST_Node::~AST_Node() {}
 
+CompoundNode::CompoundNode(std::vector<AST_Node*> _childrenNodes)
+{
+    childrenNodes = _childrenNodes;
+}
+
+TokenBase* CompoundNode::Visit()
+{
+    size_t childrenSize = childrenNodes.size();
+    for(size_t childIndex = 0; childIndex < childrenSize ; childIndex++)
+    {
+        childrenNodes[childIndex]->Visit();
+    }
+
+    return nullptr;
+}
+
 BinaryOperator::BinaryOperator(AST_Node* _left, TokenBase* _operatorToken, AST_Node* _right)
 {
     left = _left;
@@ -93,11 +109,40 @@ TokenBase* ValueNode::Visit()
     return this->token;
 }
 
+AssignNode::AssignNode(AST_Node* _variable, TokenBase* _operatorToken, AST_Node* _value)
+{
+    variable = _variable;
+    operatorToken = _operatorToken;
+    value = _value;
+}
+
+TokenBase* AssignNode::Visit()
+{
+    // variable node should be a ValueNode with StringToken
+    std::string varName = *(std::string*)variable->Visit()->GetData();
+    if(Parser::variablesMap.find(varName) == Parser::variablesMap.end())
+    {
+        Parser::ThrowException(std::string("Variable " + varName + " Not found!"));
+    }
+    else
+    {
+        // remove the old token in this variable, according to C++ standard, deleting 
+        // nullptr is defined behavior
+        //delete(Parser::variablesMap[varName]);
+        // create new token and assign it
+        Parser::variablesMap[varName] = value->Visit();
+    }
+
+    return nullptr;
+}
+
 Parser::Parser(Lexer* _lexer)
 {
     lexer = _lexer;
     currentToken = lexer->GetNextToken();
 }
+// need this line to actually declare a static variable
+std::map <std::string, TokenBase*> Parser::variablesMap;
 
 AST_Node* Parser::Parse()
 {
@@ -265,4 +310,17 @@ bool Parser::IsStringTokenSame(TokenBase* token, std::string _value)
     {
         return false;
     }
+}
+
+std::string Parser::GetStringTokenValue(TokenBase* token)
+{
+    if(token->GetValueType() != TokenValueType::String)
+    {
+        ThrowException(std::string(
+            "Parser::GetStringTokenValue : TokenValueType is not string"));
+    }
+
+    std::string stringData = *(std::string*)token->GetData();
+
+    return stringData;
 }
