@@ -1,9 +1,9 @@
 #include <iostream>
 #include <assert.h>
 
-#include "../Interpreter/Interpreter.hpp"
-#include "../Lexer/Lexer.hpp"
-#include "../Parser/Parser.hpp"
+#include "Interpreter.hpp"
+#include "Lexer.hpp"
+#include "Parser.hpp"
 
 std::string GetInterpretOutput(std::string src)
 {

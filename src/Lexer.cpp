@@ -1,5 +1,5 @@
-#include "../include/Lexer.hpp"
-#include "../include/TokenBase.hpp"
+#include "Lexer.hpp"
+#include "TokenBase.hpp"
 
 #include <iostream>
 #include <sstream>

@@ -1,4 +1,4 @@
-#include "../include/TokenBase.hpp"
+#include "TokenBase.hpp"
 
 StringToken::StringToken(std::string _value)
 {

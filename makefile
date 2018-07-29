@@ -1,36 +1,46 @@
-CC = g++
-CFLAGS = -Wall -std=c++11
+# Compile Info
+CC := g++
+SRCEXT := cpp
+CFLAGS := -O2 -std=c++11 -pthread -g -Wall
+INCDIR := -I include
 
-all: main.exe
-unittest: test.exe
+# Source Info
+SRCDIR := src
+BINDIR := bin
+TARGET := main
+SOURCES := $(shell find $(SRCDIR) -type f -iname "*.$(SRCEXT)" ! -iname "$(TARGET).$(SRCEXT)")
+OBJECTS := $(patsubst $(SRCDIR)/%,$(BINDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 
-# to test without particular component, remove dependency by removing *.o when linking
-main.exe: main.cpp Parser.o Lexer.o Interpreter.o EOF_Token.o IntegerToken.o StringToken.o TokenFactory.o
-	$(CC) $(CFLAGS) -o $@ Parser.o Lexer.o Interpreter.o main.cpp EOF_Token.o IntegerToken.o StringToken.o TokenFactory.o
+# Test Info
+TESTSRCDIR := testsrc
+TESTBINDIR := testbin
+TESTSOURCES := $(shell find $(TESTSRCDIR) -type f -name "*.$(SRCEXT)")
+TESTTARGETS := $(patsubst $(TESTSRCDIR)/%,$(TESTBINDIR)/%,$(TESTSOURCES:.$(SRCEXT)=))
 
-test.exe: main.cpp Parser.o Lexer.o Interpreter.o EOF_Token.o IntegerToken.o StringToken.o TokenFactory.o
-	$(CC) $(CFLAGS) -o $@ Parser.o Lexer.o Interpreter.o .\_UnitTests\UnitTest1.cpp EOF_Token.o IntegerToken.o StringToken.o TokenFactory.o
+# Compile main
+$(TARGET): $(OBJECTS) $(BINDIR)/$(TARGET).o
+	@echo "Linking..."
+	@echo "$(CC) $^ $(CFLAGS) -o $(TARGET) $(LIB)"; $(CC) $^ $(CFLAGS) -o $(TARGET)
 
-Interpreter.o:
-	$(CC) $(CFLAGS) -o $@ -c src/Interpreter.cpp
+$(BINDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+	@mkdir -p $(BINDIR)
+	@echo "$(CC) $(CFLAGS) $(INCDIR) -c -o $@ $<"; $(CC) $(CFLAGS) $(INCDIR) -c -o $@ $<
 
-Parser.o:
-	$(CC) $(CFLAGS) -o $@ -c src/Parser.cpp
+# Compile testers
+tester: $(TESTTARGETS)
+	@mkdir -p $(TESTBINDIR)
 
-Lexer.o:
-	$(CC) $(CFLAGS) -o $@ -c src/Lexer.cpp
+$(TESTBINDIR)/%: $(TESTBINDIR)/%.o $(OBJECTS)
+	@echo "$(CC) $^ $(CFLAGS) $(LIB) -o $@"; $(CC) $^ $(CFLAGS) $(LIB) -o $@
 
-EOF_Token.o:
-	$(CC) $(CFLAGS) -o $@ -c src/EOF_Token.cpp
+$(TESTBINDIR)/%.o: $(TESTSRCDIR)/%.cpp $(OBJECTS)
+	@mkdir -p $(TESTBINDIR)
+	@echo "$(CC) $(CFLAGS) $(INCDIR) -c $< -o $@"; $(CC) $(CFLAGS) $(INCDIR) -c $< -o $@
 
-IntegerToken.o:
-	$(CC) $(CFLAGS) -o $@ -c src/IntegerToken.cpp
-
-StringToken.o:
-	$(CC) $(CFLAGS) -o $@ -c src/StringToken.cpp
-
-TokenFactory.o:
-	$(CC) $(CFLAGS) -o $@ -c src/TokenFactory.cpp
-
+# Clean all binary files
 clean:
-	del *.exe *.o
+	@echo " Cleaning..."; 
+	@echo "$(RM) -r $(BINDIR) $(TARGET)"; $(RM) -r $(BINDIR) $(TARGET)
+	@echo "$(RM) -r $(TESTBINDIR)"; $(RM) -r $(TESTBINDIR)
+
+.PHONY: clean

@@ -1,4 +1,4 @@
-#include "../include/TokenBase.hpp"
+#include "TokenBase.hpp"
 
 TokenBase* TokenFactory::MakeToken(int _value)
 {

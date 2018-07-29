@@ -1,4 +1,4 @@
-#include "../include/TokenBase.hpp"
+#include "TokenBase.hpp"
 
 EOF_Token::EOF_Token()
 {
