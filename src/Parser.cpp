@@ -220,6 +220,7 @@ void Parser::Eat(TokenValueType tokenType, std::string _specialChar)
 // program : compound_statement DOT
 AST_Node* Parser::Program()
 {
+    std::cout << "Making CompoundStatement" << std::endl;
     AST_Node* node = CompoundStatement();
     Eat(TokenValueType::String, ".");
     return node;
@@ -229,6 +230,7 @@ AST_Node* Parser::Program()
 AST_Node* Parser::CompoundStatement()
 {
     Eat(TokenValueType::String, "BEGIN");
+    std::cout << "Making StatementList" << std::endl;
     std::vector<AST_Node*> nodes = StatementList();
     Eat(TokenValueType::String, "END");
 
@@ -239,6 +241,7 @@ AST_Node* Parser::CompoundStatement()
 //statement_list : statement | statement SEMI statement_list
 std::vector<AST_Node*> Parser::StatementList()
 {
+    std::cout << "Making Statement" << std::endl;
     AST_Node* node = Statement();
     std::vector<AST_Node*> results;
     results.push_back(node);
@@ -246,6 +249,7 @@ std::vector<AST_Node*> Parser::StatementList()
     while( IsStringTokenSame(currentToken, ";") )
     {
         Eat(TokenValueType::String, ";");
+        std::cout << "Making Statement" << std::endl;
         results.push_back(Statement());
     }
 
@@ -263,6 +267,7 @@ AST_Node* Parser::Statement()
     AST_Node* node = nullptr;
     if(IsStringTokenSame(currentToken, "BEGIN"))
     {
+        std::cout << "Making CompoundStatement" << std::endl;
         node = CompoundStatement();
     }
     // statement starts with a variable name
