@@ -12,7 +12,7 @@ SOURCES := $(shell find $(SRCDIR) -type f -iname "*.$(SRCEXT)" ! -iname "$(TARGE
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BINDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 
 # Test Info
-TESTSRCDIR := test
+TESTSRCDIR := testsrc
 TESTBINDIR := testbin
 TESTSOURCES := $(shell find $(TESTSRCDIR) -type f -name "*.$(SRCEXT)")
 TESTTARGETS := $(patsubst $(TESTSRCDIR)/%,$(TESTBINDIR)/%,$(TESTSOURCES:.$(SRCEXT)=))
