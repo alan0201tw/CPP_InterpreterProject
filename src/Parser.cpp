@@ -41,6 +41,12 @@ TokenBase* BinaryOperator::Visit()
         // deal with numeric operators
         if(Parser::IsStringTokenSame(operatorToken, "+"))
         {
+            // std::map<std::string, TokenBase*>::iterator it;
+
+            // for ( it = Parser::variablesMap.begin(); it != Parser::variablesMap.end(); it++ )
+            // {
+            //     std::cout << it->first << " : " << it->second->ToString() << std::endl;
+            // }
             returningToken = left->Visit()->Add(right->Visit());
         }
         else if(Parser::IsStringTokenSame(operatorToken, "-"))
@@ -88,13 +94,16 @@ TokenBase* UnaryOperator::Visit()
         if(Parser::IsStringTokenSame(operatorToken, "+"))
         {
             returningToken = expr->Visit();
+            return returningToken;
         }
         else if(Parser::IsStringTokenSame(operatorToken, "-"))
         {
             returningToken = expr->Visit()->Multiply(TokenFactory::MakeToken(-1));
+            return returningToken;
         }
     }
 
+    Parser::ThrowException(std::string("UnaryOperator::Visit : operator is not + or -"));
     return returningToken;
 }
 
@@ -119,13 +128,22 @@ AssignNode::AssignNode(AST_Node* _variable, TokenBase* _operatorToken, AST_Node*
 TokenBase* AssignNode::Visit()
 {
     // variable node should be a ValueNode with StringToken
-    std::string varName = *(std::string*)variable->Visit()->GetData();
+    // !!! NOT A VariableNode
 
+    // this will return the var value node, not the variable name!
+    // std::string varName = *(std::string*)variable->Visit()->GetData();
+    
     // remove the old token in this variable, according to C++ standard, deleting 
     // nullptr is defined behavior
-    //delete(Parser::variablesMap[varName]);
+    // delete(Parser::variablesMap[varName]);
     // create new token and assign it
-    Parser::variablesMap[varName] = value->Visit();
+
+    // variable (VariableNode) -> Visit not returning var name
+    // turn into ValueNode
+
+    // Parser::variablesMap[varName] = variable->Visit();
+
+    variable = new ValueNode(value->Visit());
     
     return nullptr;
 }
@@ -141,14 +159,10 @@ TokenBase* VariableNode::Visit()
     // not found
     if(Parser::variablesMap.find(varName) == Parser::variablesMap.end())
     {
-        Parser::ThrowException(std::string("Variable " + varName + " not found."));
-    }
-    else
-    {
-        return Parser::variablesMap[varName];
+        Parser::variablesMap[varName] = TokenFactory::MakeEOF_Token();
     }
 
-    return nullptr;
+    return Parser::variablesMap[varName];
 }
 
 // empty constructor for NoOperationNode
@@ -220,7 +234,7 @@ void Parser::Eat(TokenValueType tokenType, std::string _specialChar)
 // program : compound_statement DOT
 AST_Node* Parser::Program()
 {
-    std::cout << "Making CompoundStatement" << std::endl;
+    std::cout << "Making Program" << std::endl;
     AST_Node* node = CompoundStatement();
     Eat(TokenValueType::String, ".");
     return node;
@@ -229,8 +243,8 @@ AST_Node* Parser::Program()
 // compound_statement: BEGIN statement_list END
 AST_Node* Parser::CompoundStatement()
 {
+    std::cout << "Making CompoundStatement" << std::endl;
     Eat(TokenValueType::String, "BEGIN");
-    std::cout << "Making StatementList" << std::endl;
     std::vector<AST_Node*> nodes = StatementList();
     Eat(TokenValueType::String, "END");
 
@@ -241,7 +255,7 @@ AST_Node* Parser::CompoundStatement()
 //statement_list : statement | statement SEMI statement_list
 std::vector<AST_Node*> Parser::StatementList()
 {
-    std::cout << "Making Statement" << std::endl;
+    std::cout << "Making StatementList" << std::endl;
     AST_Node* node = Statement();
     std::vector<AST_Node*> results;
     results.push_back(node);
@@ -249,7 +263,6 @@ std::vector<AST_Node*> Parser::StatementList()
     while( IsStringTokenSame(currentToken, ";") )
     {
         Eat(TokenValueType::String, ";");
-        std::cout << "Making Statement" << std::endl;
         results.push_back(Statement());
     }
 
@@ -264,14 +277,15 @@ std::vector<AST_Node*> Parser::StatementList()
 // statement : compound_statement | assignment_statement | empty
 AST_Node* Parser::Statement()
 {
+    std::cout << "Making Statement" << std::endl;
     AST_Node* node = nullptr;
     if(IsStringTokenSame(currentToken, "BEGIN"))
     {
-        std::cout << "Making CompoundStatement" << std::endl;
         node = CompoundStatement();
     }
-    // statement starts with a variable name
-    else if(currentToken->GetValueType() == TokenValueType::String)
+    // statement starts with a variable name, !!! IMPORTANT : the string is not a 
+    // keyword!!!
+    else if(currentToken->GetValueType() == TokenValueType::String && !IsStringTokenSame(currentToken, "END") && !IsStringTokenSame(currentToken, "BEGIN"))
     {
         node = AssignmentStatement();
     }
@@ -291,6 +305,7 @@ AST_Node* Parser::Statement()
 // assignment_statement : variable ASSIGN expr
 AST_Node* Parser::AssignmentStatement()
 {
+    std::cout << "Making AssignmentStatement" << std::endl;
     AST_Node* var = Variable();
     TokenBase* token = currentToken;
     Eat(TokenValueType::String, ":=");
@@ -303,6 +318,7 @@ AST_Node* Parser::AssignmentStatement()
 // variable : ID
 AST_Node* Parser::Variable()
 {
+    std::cout << "Making Variable" << std::endl;
     AST_Node* node = new VariableNode(currentToken);
     // eat the variable name, the name is not a const string, so just eat a random string
     Eat(TokenValueType::String);
@@ -313,12 +329,14 @@ AST_Node* Parser::Variable()
 // An empty production
 AST_Node* Parser::Empty()
 {
+    std::cout << "Making Empty" << std::endl;
     return new NoOperationNode();
 }
 
 // factor : (PLUS | MINUS) factor | INTEGER | LPAREN expr RPAREN
 AST_Node* Parser::Factor()
 {
+    std::cout << "Making Factor" << std::endl;
     TokenBase* token = currentToken;
     TokenValueType valueType = token->GetValueType();
     // this factor is an integer
@@ -379,6 +397,7 @@ AST_Node* Parser::Factor()
 // term : factor ((MUL | DIV) factor)*
 AST_Node* Parser::Term()
 {
+    std::cout << "Making Term" << std::endl;
     AST_Node* node = Factor();
     // if current token is "*" or "/"
     while( IsStringTokenSame(currentToken, "*") || IsStringTokenSame(currentToken, "/") )
@@ -392,16 +411,16 @@ AST_Node* Parser::Term()
         {
             Eat(TokenValueType::String, "/");
         }
-
+        
         node = new BinaryOperator(node, token, Factor());
     }
-
     return node;
 }
 
 // expr   : term ((PLUS | MINUS) term)*
 AST_Node* Parser::Expr()
 {
+    std::cout << "Making Expr" << std::endl;
     AST_Node* node = Term();
     // if current token is "*" or "/"
     while( IsStringTokenSame(currentToken, "+") || IsStringTokenSame(currentToken, "-") )
@@ -415,7 +434,7 @@ AST_Node* Parser::Expr()
         {
             Eat(TokenValueType::String, "-");
         }
-
+        
         node = new BinaryOperator(node, token, Term());
     }
 

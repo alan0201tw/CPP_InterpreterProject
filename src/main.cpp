@@ -46,9 +46,6 @@ int main(int argc, char* argv[])
 
     for ( it = Parser::variablesMap.begin(); it != Parser::variablesMap.end(); it++ )
     {
-        std::cout << it->first  // string (key)
-                << ':'
-                << it->second   // string's value 
-                << std::endl ;
+        std::cout << it->first << " : " << it->second->ToString() << std::endl;
     }
 }
