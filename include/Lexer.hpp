@@ -7,6 +7,13 @@
 #include <string>
 #include <vector>
 
+enum class ReadingStatus : unsigned short int
+{
+    Idle,
+    ReadyToRead,
+    FinishReading
+};
+
 class Lexer final
 {
 public:
@@ -39,6 +46,6 @@ private:
     char currentChar;
 
     bool isFinished;
-    int ReadStringState;
+    ReadingStatus StringReadingState;
 };
 #endif

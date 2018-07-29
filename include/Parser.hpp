@@ -87,6 +87,14 @@ private:
     TokenBase* token;
 };
 
+class NoOperationNode final : public AST_Node
+{
+public:
+    NoOperationNode();
+
+    virtual TokenBase* Visit();
+};
+
 class Parser final
 {
 public:
@@ -100,7 +108,6 @@ public:
     static std::string GetStringTokenValue(TokenBase* token);
     // variables in program
     // use ID ( identifier, variable names ) to get Token
-
     // each time an value assignment happens, free old token and make a new one
     static std::map <std::string, TokenBase*> variablesMap;
 
@@ -111,9 +118,19 @@ private:
     TokenBase* currentToken;
 
     // Grammar Variables and its definition
-    AST_Node* Factor();
-    AST_Node* Term();
+    // Actual Program Structure
+    AST_Node* Program();
+    AST_Node* CompoundStatement();
+    std::vector<AST_Node*> StatementList();
+    AST_Node* Statement();
+    AST_Node* AssignmentStatement();
+    AST_Node* Variable();
+    AST_Node* Empty();
+
+    // Basics
     AST_Node* Expr();
+    AST_Node* Term();
+    AST_Node* Factor();
 };
 
 #endif

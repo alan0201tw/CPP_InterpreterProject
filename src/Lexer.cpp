@@ -18,7 +18,7 @@ Lexer::Lexer(std::string _text)
     currentChar = text[position];
     isFinished = false;
     // 0 for idle, 1 for starting to read, 2 for finish reading
-    ReadStringState = 0;
+    StringReadingState = ReadingStatus::Idle;
 }
 
 void Lexer::Advance()
@@ -97,10 +97,19 @@ TokenBase* Lexer::GetNextToken()
 {
     while(isFinished == false)
     {
-        if(ReadStringState == 1)
+        // when read a newline char, ignore it
+        if(currentChar == '\r' || currentChar == '\n')
+        {
+            Advance();
+            continue;
+        }
+
+        // if the Lexer is trying to read a string, don't do any preprocessing
+        // just return a const string token
+        if(StringReadingState == ReadingStatus::ReadyToRead)
         {
             TokenBase* token = TokenFactory::MakeToken(RetrieveConstString());
-            ReadStringState = 2;
+            StringReadingState = ReadingStatus::FinishReading;
             return token;
         }
 
@@ -109,7 +118,7 @@ TokenBase* Lexer::GetNextToken()
         {
             SkipWhitespace();
         }
-
+        // TODO : floating point value support
         if(isdigit(currentChar))
         {
             return TokenFactory::MakeToken(RetrieveInteger());
@@ -120,7 +129,7 @@ TokenBase* Lexer::GetNextToken()
         // this StringToken can be either a const string value, or a keyword
         else if(isalpha(currentChar) || currentChar == '_')
         {
-            return TokenFactory::MakeToken(RetrieveConstString());
+            return GetTokenById();
         }
         else if(currentChar == ':' && Peek() == '=')
         {
@@ -158,17 +167,27 @@ TokenBase* Lexer::GetNextToken()
             Advance();
             return TokenFactory::MakeToken(std::string(")"));
         }
+        else if(currentChar == '.')
+        {
+            Advance();
+            return TokenFactory::MakeToken(std::string("."));
+        }
+        else if(currentChar == ';')
+        {
+            Advance();
+            return TokenFactory::MakeToken(std::string(";"));
+        }
         else if(currentChar == '\"')
         {
             Advance();
             // change reading string state
-            if(ReadStringState == 0)
+            if(StringReadingState == ReadingStatus::Idle)
             {
-                ReadStringState = 1;
+                StringReadingState = ReadingStatus::ReadyToRead;
             }
-            else if(ReadStringState == 2)
+            else if(StringReadingState == ReadingStatus::FinishReading)
             {
-                ReadStringState = 0;
+                StringReadingState = ReadingStatus::Idle;
             }
             return TokenFactory::MakeToken(std::string("\""));
         }

@@ -42,4 +42,13 @@ int main(int argc, char* argv[])
     std::string result = interpreter->Interpret()->ToString();
 
     std::cout << "Result = " << result << std::endl;
+    map<std::string, TokenBase*>::iterator it;
+
+    for ( it = Parser::variablesMap.begin(); it != Parser::variablesMap.end(); it++ )
+    {
+        std::cout << it->first  // string (key)
+                << ':'
+                << it->second   // string's value 
+                << std::endl ;
+    }
 }
