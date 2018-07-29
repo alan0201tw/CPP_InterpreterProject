@@ -1,4 +1,4 @@
-#include "../include/TokenBase.hpp"
+#include "TokenBase.hpp"
 
 IntegerToken::IntegerToken(int _value)
 {

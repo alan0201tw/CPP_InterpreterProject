@@ -1,8 +1,8 @@
-#include "../include/Parser.hpp"
+#include "Parser.hpp"
 #include <stdexcept>
 
-#include "../include/Lexer.hpp"
-#include "../include/TokenBase.hpp"
+#include "Lexer.hpp"
+#include "TokenBase.hpp"
 
 // helping mark AST_Node as abstract class
 AST_Node::~AST_Node() {}
