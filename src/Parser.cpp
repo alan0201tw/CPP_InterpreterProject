@@ -41,12 +41,6 @@ TokenBase* BinaryOperator::Visit()
         // deal with numeric operators
         if(Parser::IsStringTokenSame(operatorToken, "+"))
         {
-            // std::map<std::string, TokenBase*>::iterator it;
-
-            // for ( it = Parser::variablesMap.begin(); it != Parser::variablesMap.end(); it++ )
-            // {
-            //     std::cout << it->first << " : " << it->second->ToString() << std::endl;
-            // }
             returningToken = left->Visit()->Add(right->Visit());
         }
         else if(Parser::IsStringTokenSame(operatorToken, "-"))
@@ -118,7 +112,7 @@ TokenBase* ValueNode::Visit()
     return this->token;
 }
 
-AssignNode::AssignNode(AST_Node* _variable, TokenBase* _operatorToken, AST_Node* _value)
+AssignNode::AssignNode(VariableNode* _variable, TokenBase* _operatorToken, AST_Node* _value)
 {
     variable = _variable;
     operatorToken = _operatorToken;
@@ -129,21 +123,14 @@ TokenBase* AssignNode::Visit()
 {
     // variable node should be a ValueNode with StringToken
     // !!! NOT A VariableNode
-
-    // this will return the var value node, not the variable name!
-    // std::string varName = *(std::string*)variable->Visit()->GetData();
     
     // remove the old token in this variable, according to C++ standard, deleting 
     // nullptr is defined behavior
     // delete(Parser::variablesMap[varName]);
     // create new token and assign it
 
-    // variable (VariableNode) -> Visit not returning var name
-    // turn into ValueNode
-
-    // Parser::variablesMap[varName] = variable->Visit();
-
-    variable = new ValueNode(value->Visit());
+    std::string varName = variable->GetVarName();
+    Parser::variablesMap[varName] = value->Visit();
     
     return nullptr;
 }
@@ -151,6 +138,12 @@ TokenBase* AssignNode::Visit()
 VariableNode::VariableNode(TokenBase* _token)
 {
     token = _token;
+}
+
+std::string VariableNode::GetVarName()
+{
+    std::string varName = *(std::string*)token->GetData();
+    return varName;
 }
 
 TokenBase* VariableNode::Visit()
@@ -196,6 +189,13 @@ AST_Node* Parser::Parse()
 
 void Parser::ThrowException(std::string message)
 {
+    std::map<std::string, TokenBase*>::iterator it;
+
+    for ( it = Parser::variablesMap.begin(); it != Parser::variablesMap.end(); it++ )
+    {
+        std::cout << it->first << " : " << it->second->ToString() << std::endl;
+    }
+
     throw std::runtime_error(message);
 }
 
@@ -306,7 +306,7 @@ AST_Node* Parser::Statement()
 AST_Node* Parser::AssignmentStatement()
 {
     std::cout << "Making AssignmentStatement" << std::endl;
-    AST_Node* var = Variable();
+    VariableNode* var = Variable();
     TokenBase* token = currentToken;
     Eat(TokenValueType::String, ":=");
     AST_Node* value = Expr();
@@ -316,10 +316,10 @@ AST_Node* Parser::AssignmentStatement()
 }
 
 // variable : ID
-AST_Node* Parser::Variable()
+VariableNode* Parser::Variable()
 {
     std::cout << "Making Variable" << std::endl;
-    AST_Node* node = new VariableNode(currentToken);
+    VariableNode* node = new VariableNode(currentToken);
     // eat the variable name, the name is not a const string, so just eat a random string
     Eat(TokenValueType::String);
 

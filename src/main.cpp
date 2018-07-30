@@ -39,9 +39,9 @@ int main(int argc, char* argv[])
     Parser* parser = new Parser(lexer);
     Interpreter* interpreter = new Interpreter(parser);
     // call the final token's ToString method to turn result to string
-    std::string result = interpreter->Interpret()->ToString();
-
-    std::cout << "Result = " << result << std::endl;
+    //std::string result = interpreter->Interpret()->ToString();
+    interpreter->Interpret();
+    //std::cout << "Result = " << result << std::endl;
     map<std::string, TokenBase*>::iterator it;
 
     for ( it = Parser::variablesMap.begin(); it != Parser::variablesMap.end(); it++ )

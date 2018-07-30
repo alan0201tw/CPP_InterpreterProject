@@ -62,19 +62,6 @@ private:
     TokenBase* token;
 };
 
-class AssignNode final : public AST_Node
-{
-public:
-    AssignNode(AST_Node* _variable, TokenBase* _operatorToken, AST_Node* _value);
-
-    virtual TokenBase* Visit();
-
-private:
-    AST_Node* variable;
-    AST_Node* value;
-    TokenBase* operatorToken;
-};
-
 // The VariableNode is constructed out of ID token.
 class VariableNode final : public AST_Node
 {
@@ -82,9 +69,23 @@ public:
     VariableNode(TokenBase* _token);
 
     virtual TokenBase* Visit();
+    std::string GetVarName();
 
 private:
     TokenBase* token;
+};
+
+class AssignNode final : public AST_Node
+{
+public:
+    AssignNode(VariableNode* _variable, TokenBase* _operatorToken, AST_Node* _value);
+
+    virtual TokenBase* Visit();
+
+private:
+    VariableNode* variable;
+    AST_Node* value;
+    TokenBase* operatorToken;
 };
 
 class NoOperationNode final : public AST_Node
@@ -124,7 +125,7 @@ private:
     std::vector<AST_Node*> StatementList();
     AST_Node* Statement();
     AST_Node* AssignmentStatement();
-    AST_Node* Variable();
+    VariableNode* Variable();
     AST_Node* Empty();
 
     // Basics
