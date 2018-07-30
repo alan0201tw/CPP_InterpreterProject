@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <algorithm>
 
 #include <stdexcept>
 
@@ -198,6 +199,12 @@ TokenBase* Lexer::GetNextToken()
     }
 
     return TokenFactory::MakeEOF_Token();
+}
+
+bool Lexer::IsStringReservedKeyword(std::string _value)
+{
+    // _value found in ReservedKeyWords
+    return ReservedKeyWords.find(_value) != ReservedKeyWords.end();
 }
 
 // No need to call this TemporaryFunction() function,

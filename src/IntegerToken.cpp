@@ -97,6 +97,11 @@ TokenBase* IntegerToken::Multiply(TokenBase* token)
 
             return TokenFactory::MakeToken(result);
         }
+        case TokenValueType::String:
+        {
+            std::string result = *((std::string*)token->Multiply(this)->GetData());
+            return TokenFactory::MakeToken(result);
+        }
         default:
         {
             std::cout << "IntegerToken using unexpected * operator" << std::endl;

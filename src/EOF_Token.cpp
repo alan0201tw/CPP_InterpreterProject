@@ -15,24 +15,24 @@ std::string EOF_Token::ToString()
 
 TokenBase* EOF_Token::Add(TokenBase* token) 
 {
-    std::cout << "EOF_Token using unexpected + operator" << std::endl;
+    throw new std::runtime_error(std::string("EOF_Token using unexpected + operator"));
     return nullptr;
 }
 
 TokenBase* EOF_Token::Minus(TokenBase* token) 
 {
-    std::cout << "EOF_Token using unexpected - operator" << std::endl;
+    throw new std::runtime_error(std::string("EOF_Token using unexpected - operator"));
     return nullptr;
 }
 
 TokenBase* EOF_Token::Multiply(TokenBase* token) 
 {
-    std::cout << "EOF_Token using unexpected * operator" << std::endl;
+    throw new std::runtime_error(std::string("EOF_Token using unexpected * operator"));
     return nullptr;
 }
 
 TokenBase* EOF_Token::Divide(TokenBase* token) 
 {
-    std::cout << "EOF_Token using unexpected / operator" << std::endl;
+    throw new std::runtime_error(std::string("EOF_Token using unexpected / operator"));
     return nullptr;
 }

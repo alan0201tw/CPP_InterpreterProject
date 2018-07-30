@@ -6,6 +6,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 
 enum class ReadingStatus : unsigned short int
 {
@@ -22,6 +23,8 @@ public:
     // this needes to return Tokens with different value types
     // this will be called by Parser
     TokenBase* GetNextToken();
+    // for Parser to use, to determine whether a string is a variable or a keyword
+    bool IsStringReservedKeyword(std::string _value);
 
 private:
     // utility function
@@ -36,7 +39,7 @@ private:
     TokenBase* GetTokenById();
 
     // use this to define keywords
-    std::vector<std::string> ReservedKeyWords = 
+    std::set<std::string> ReservedKeyWords
     {
         "BEGIN", "END"
     };

@@ -189,13 +189,6 @@ AST_Node* Parser::Parse()
 
 void Parser::ThrowException(std::string message)
 {
-    std::map<std::string, TokenBase*>::iterator it;
-
-    for ( it = Parser::variablesMap.begin(); it != Parser::variablesMap.end(); it++ )
-    {
-        std::cout << it->first << " : " << it->second->ToString() << std::endl;
-    }
-
     throw std::runtime_error(message);
 }
 
@@ -285,7 +278,7 @@ AST_Node* Parser::Statement()
     }
     // statement starts with a variable name, !!! IMPORTANT : the string is not a 
     // keyword!!!
-    else if(currentToken->GetValueType() == TokenValueType::String && !IsStringTokenSame(currentToken, "END") && !IsStringTokenSame(currentToken, "BEGIN"))
+    else if(currentToken->GetValueType() == TokenValueType::String && !lexer->IsStringReservedKeyword(GetStringTokenValue(currentToken)))
     {
         node = AssignmentStatement();
     }
