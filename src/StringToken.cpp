@@ -9,7 +9,7 @@ StringToken::StringToken(std::string _value)
 
     valueType = TokenValueType::String;
 
-    std::cout << "StringToken Constructor, *_value = " << _value << ", dataPtr = " << data << std::endl;
+    //std::cout << "StringToken Constructor, *_value = " << _value << ", dataPtr = " << data << std::endl;
 }
 
 std::string StringToken::ToString()

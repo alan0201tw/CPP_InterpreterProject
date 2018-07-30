@@ -7,7 +7,7 @@ BEGIN
         b := 1;
         c := a - - b;
         str := 2 *("a simple string " + 2) + ", follow by another string";
-        sss := "ooo    " + str + " ooo" + 1;
+        sss := "ooo    " + str + "    ooo" + 1;
         str := sss;
     END
     std := "ok";

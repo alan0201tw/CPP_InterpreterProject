@@ -25,9 +25,7 @@ Lexer::Lexer(std::string _text)
 void Lexer::Advance()
 {
     position++;
-    std::cout << "position = " << position << std::endl;
-    std::cout << "(int)text.size() = " << (int)text.size() << std::endl;
-    if(position >= (int)text.size())
+    if(position >= text.size())
     {
         isFinished = true;
     }
@@ -39,8 +37,8 @@ void Lexer::Advance()
 
 char Lexer::Peek()
 {
-    int peekPosition = position + 1;
-    if(peekPosition >= (int)text.length())
+    size_t peekPosition = position + 1;
+    if(peekPosition >= text.size())
     {
         return '\0';
     }
@@ -92,7 +90,7 @@ TokenBase* Lexer::GetTokenById()
         Advance();
     }
     // this result is identifier
-    std::cout << "After GetTokenById currentChar = " << (int)currentChar << std::endl;
+    //std::cout << "After GetTokenById currentChar = " << (int)currentChar << std::endl;
     TokenBase* token = TokenFactory::MakeToken(result);
     return token;
 }
@@ -101,14 +99,13 @@ TokenBase* Lexer::GetNextToken()
 {
     while(isFinished == false)
     {
-        std::cout << "In while : CurrentChar = " << (int)currentChar << std::endl;
         // when read a newline char, ignore it
-        if(currentChar == '\r' || currentChar == '\n' || currentChar == '\t' || currentChar == ' ')
+        if(currentChar == '\r' || currentChar == '\n' || currentChar == '\t' || 
+        (currentChar == ' ' && StringReadingState != ReadingStatus::ReadyToRead))
         {
             Advance();
             continue;
         }
-
         // if the Lexer is trying to read a string, don't do any preprocessing
         // just return a const string token
         if(StringReadingState == ReadingStatus::ReadyToRead)
@@ -119,7 +116,7 @@ TokenBase* Lexer::GetNextToken()
         }
 
         // TODO : floating point value support
-        if(isdigit(currentChar))
+        else if(isdigit(currentChar))
         {
             return TokenFactory::MakeToken(RetrieveInteger());
             //return new Token(TokenValueType::INTEGER, RetrieveIntegerString());
@@ -197,7 +194,7 @@ TokenBase* Lexer::GetNextToken()
             throw std::runtime_error(std::string("Lexer.cpp : Get unexpected char : ") + currentChar);
         }
     }
-    std::cout << "isFinished = " << isFinished << std::endl;
+    //std::cout << "isFinished = " << isFinished << std::endl;
     return TokenFactory::MakeEOF_Token();
 }
 

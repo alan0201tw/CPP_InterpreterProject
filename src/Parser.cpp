@@ -227,7 +227,7 @@ void Parser::Eat(TokenValueType tokenType, std::string _specialChar)
 // program : compound_statement DOT
 AST_Node* Parser::Program()
 {
-    std::cout << "Making Program" << std::endl;
+    //std::cout << "Making Program" << std::endl;
     AST_Node* node = CompoundStatement();
     return node;
 }
@@ -235,7 +235,7 @@ AST_Node* Parser::Program()
 // compound_statement: BEGIN statement_list END
 AST_Node* Parser::CompoundStatement()
 {
-    std::cout << "Making CompoundStatement" << std::endl;
+    //std::cout << "Making CompoundStatement" << std::endl;
     Eat(TokenValueType::String, "BEGIN");
     std::vector<AST_Node*> nodes = StatementList();
     Eat(TokenValueType::String, "END");
@@ -246,7 +246,7 @@ AST_Node* Parser::CompoundStatement()
 //statement_list : statement | statement SEMI statement_list
 std::vector<AST_Node*> Parser::StatementList()
 {
-    std::cout << "Making StatementList" << std::endl;
+    //std::cout << "Making StatementList" << std::endl;
     AST_Node* node = Statement();
     std::vector<AST_Node*> results;
     results.push_back(node);
@@ -267,7 +267,7 @@ std::vector<AST_Node*> Parser::StatementList()
 // statement : compound_statement | assignment_statement | empty
 AST_Node* Parser::Statement()
 {
-    std::cout << "Making Statement" << std::endl;
+    //std::cout << "Making Statement" << std::endl;
     AST_Node* node = nullptr;
     if(IsStringTokenSame(currentToken, "BEGIN"))
     {
@@ -283,10 +283,10 @@ AST_Node* Parser::Statement()
     }
     else
     {
-        std::cout << "CurrentToken = " << currentToken->ToString() << std::endl;
+        //std::cout << "CurrentToken = " << currentToken->ToString() << std::endl;
         node = Empty();
-
-        Eat(TokenValueType::String);
+        //Eat(TokenValueType::String, "");
+        //Eat(TokenValueType::EOF_Token);
     }
 
     if(node == nullptr)
@@ -300,7 +300,7 @@ AST_Node* Parser::Statement()
 // assignment_statement : variable ASSIGN expr
 AST_Node* Parser::AssignmentStatement()
 {
-    std::cout << "Making AssignmentStatement" << std::endl;
+    //std::cout << "Making AssignmentStatement" << std::endl;
     VariableNode* var = Variable();
     TokenBase* token = currentToken;
     Eat(TokenValueType::String, ":=");
@@ -313,7 +313,7 @@ AST_Node* Parser::AssignmentStatement()
 // variable : ID
 VariableNode* Parser::Variable()
 {
-    std::cout << "Making Variable" << std::endl;
+    //std::cout << "Making Variable" << std::endl;
     VariableNode* node = new VariableNode(currentToken);
     // eat the variable name, the name is not a const string, so just eat a random string
     Eat(TokenValueType::String);
@@ -324,14 +324,14 @@ VariableNode* Parser::Variable()
 // An empty production
 AST_Node* Parser::Empty()
 {
-    std::cout << "Making Empty" << std::endl;
+    //std::cout << "Making Empty" << std::endl;
     return new NoOperationNode();
 }
 
 // factor : (PLUS | MINUS) factor | INTEGER | LPAREN expr RPAREN
 AST_Node* Parser::Factor()
 {
-    std::cout << "Making Factor" << std::endl;
+    //std::cout << "Making Factor" << std::endl;
     TokenBase* token = currentToken;
     TokenValueType valueType = token->GetValueType();
     // this factor is an integer
@@ -392,7 +392,7 @@ AST_Node* Parser::Factor()
 // term : factor ((MUL | DIV) factor)*
 AST_Node* Parser::Term()
 {
-    std::cout << "Making Term" << std::endl;
+    //std::cout << "Making Term" << std::endl;
     AST_Node* node = Factor();
     // if current token is "*" or "/"
     while( IsStringTokenSame(currentToken, "*") || IsStringTokenSame(currentToken, "/") )
@@ -415,7 +415,7 @@ AST_Node* Parser::Term()
 // expr   : term ((PLUS | MINUS) term)*
 AST_Node* Parser::Expr()
 {
-    std::cout << "Making Expr" << std::endl;
+    //std::cout << "Making Expr" << std::endl;
     AST_Node* node = Term();
     // if current token is "*" or "/"
     while( IsStringTokenSame(currentToken, "+") || IsStringTokenSame(currentToken, "-") )

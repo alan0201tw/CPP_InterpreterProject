@@ -45,7 +45,7 @@ private:
     };
 
     std::string text;
-    int position;
+    size_t position;
     char currentChar;
 
     bool isFinished;
