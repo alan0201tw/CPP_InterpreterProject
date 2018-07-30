@@ -1,5 +1,4 @@
 BEGIN
-
     BEGIN
         number := 2;
         a := number;
@@ -8,7 +7,10 @@ BEGIN
         b := 1;
         c := a - - b;
         str := 2 *("a simple string " + 2) + ", follow by another string";
-    END;
-
+        sss := "ooo    " + str + " ooo" + 1;
+        str := sss;
+    END
+    std := "ok";
     x := 11;
-END.
+    std1s := "ok";
+END

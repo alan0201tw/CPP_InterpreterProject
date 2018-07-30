@@ -25,7 +25,9 @@ Lexer::Lexer(std::string _text)
 void Lexer::Advance()
 {
     position++;
-    if(position >= (int)text.length())
+    std::cout << "position = " << position << std::endl;
+    std::cout << "(int)text.size() = " << (int)text.size() << std::endl;
+    if(position >= (int)text.size())
     {
         isFinished = true;
     }
@@ -90,6 +92,7 @@ TokenBase* Lexer::GetTokenById()
         Advance();
     }
     // this result is identifier
+    std::cout << "After GetTokenById currentChar = " << (int)currentChar << std::endl;
     TokenBase* token = TokenFactory::MakeToken(result);
     return token;
 }
@@ -98,8 +101,9 @@ TokenBase* Lexer::GetNextToken()
 {
     while(isFinished == false)
     {
+        std::cout << "In while : CurrentChar = " << (int)currentChar << std::endl;
         // when read a newline char, ignore it
-        if(currentChar == '\r' || currentChar == '\n')
+        if(currentChar == '\r' || currentChar == '\n' || currentChar == '\t' || currentChar == ' ')
         {
             Advance();
             continue;
@@ -114,11 +118,6 @@ TokenBase* Lexer::GetNextToken()
             return token;
         }
 
-        // deal with all kinds of Tokens
-        if(currentChar == ' ')
-        {
-            SkipWhitespace();
-        }
         // TODO : floating point value support
         if(isdigit(currentChar))
         {
@@ -194,10 +193,11 @@ TokenBase* Lexer::GetNextToken()
         }
         else
         {
+            std::cout << "In exception : CurrentChar = " << (int)currentChar << std::endl;
             throw std::runtime_error(std::string("Lexer.cpp : Get unexpected char : ") + currentChar);
         }
     }
-
+    std::cout << "isFinished = " << isFinished << std::endl;
     return TokenFactory::MakeEOF_Token();
 }
 

@@ -220,7 +220,7 @@ void Parser::Eat(TokenValueType tokenType, std::string _specialChar)
     }
     else
     {
-        ThrowException(std::string("Error when trying to eat a token."));
+        ThrowException(std::string("Error when trying to eat a token, currentToken is " + currentToken->ToString() + ", _specialChar = " + _specialChar));
     }
 }
 
@@ -229,7 +229,6 @@ AST_Node* Parser::Program()
 {
     std::cout << "Making Program" << std::endl;
     AST_Node* node = CompoundStatement();
-    Eat(TokenValueType::String, ".");
     return node;
 }
 
@@ -240,7 +239,6 @@ AST_Node* Parser::CompoundStatement()
     Eat(TokenValueType::String, "BEGIN");
     std::vector<AST_Node*> nodes = StatementList();
     Eat(TokenValueType::String, "END");
-
     AST_Node* root = new CompoundNode(nodes);
     return root;
 }
@@ -253,9 +251,8 @@ std::vector<AST_Node*> Parser::StatementList()
     std::vector<AST_Node*> results;
     results.push_back(node);
 
-    while( IsStringTokenSame(currentToken, ";") )
+    while( !IsStringTokenSame(currentToken, "END") )
     {
-        Eat(TokenValueType::String, ";");
         results.push_back(Statement());
     }
 
@@ -281,10 +278,15 @@ AST_Node* Parser::Statement()
     else if(currentToken->GetValueType() == TokenValueType::String && !lexer->IsStringReservedKeyword(GetStringTokenValue(currentToken)))
     {
         node = AssignmentStatement();
+        
+        Eat(TokenValueType::String, ";");
     }
     else
     {
+        std::cout << "CurrentToken = " << currentToken->ToString() << std::endl;
         node = Empty();
+
+        Eat(TokenValueType::String);
     }
 
     if(node == nullptr)
@@ -356,7 +358,7 @@ AST_Node* Parser::Factor()
             Eat(TokenValueType::String, "\"");
             // after eating the first ", current token will be a string token
             AST_Node* node = new ValueNode(currentToken);
-            Eat(TokenValueType::String, "");
+            Eat(TokenValueType::String);
             Eat(TokenValueType::String, "\"");
 
             return node;

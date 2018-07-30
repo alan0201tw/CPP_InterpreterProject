@@ -1,0 +1,6 @@
+BEGIN
+    BEGIN
+        a:= 1;
+        
+    END
+END
