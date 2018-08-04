@@ -48,13 +48,13 @@ public:
     void* GetData()
     {
         return data;
-    };
+    }
     TokenValueType GetValueType()
     {
         return valueType;
     }
     // for safe deleting tokens
-    //virtual ~TokenBase() = 0;
+    virtual ~TokenBase() {};
 
     virtual std::string ToString() = 0;
     virtual TokenBase* Add(TokenBase* token) = 0;
@@ -69,7 +69,10 @@ private:
     IntegerToken(int _value);
 
 public:
+
     friend class TokenFactory;
+
+    virtual ~IntegerToken() {}
 
     virtual std::string ToString();
 
@@ -85,6 +88,8 @@ private:
     StringToken(std::string _value);
 public:
     friend class TokenFactory;
+
+    virtual ~StringToken() {}
 
     virtual std::string ToString();
 
@@ -104,6 +109,8 @@ private:
     
 public:
     friend class TokenFactory;
+
+    virtual ~EOF_Token() {}
 
     virtual std::string ToString();
 

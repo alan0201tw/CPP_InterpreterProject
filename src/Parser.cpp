@@ -126,10 +126,11 @@ TokenBase* AssignNode::Visit()
     
     // remove the old token in this variable, according to C++ standard, deleting 
     // nullptr is defined behavior
-    // delete(Parser::variablesMap[varName]);
     // create new token and assign it
 
     std::string varName = variable->GetVarName();
+    
+    delete(Parser::variablesMap[varName]);
     Parser::variablesMap[varName] = value->Visit();
     
     return nullptr;

@@ -25,6 +25,8 @@ public:
     TokenBase* GetNextToken();
     // for Parser to use, to determine whether a string is a variable or a keyword
     bool IsStringReservedKeyword(std::string _value);
+    bool IsValidVarStart(char _char);
+    bool IsValidVarFollow(char _char);
 
 private:
     // utility function

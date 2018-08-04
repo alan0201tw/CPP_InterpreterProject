@@ -84,7 +84,7 @@ std::string Lexer::RetrieveConstString()
 TokenBase* Lexer::GetTokenById()
 {
     std::string result = "";
-    while(isFinished == false && isalnum(currentChar))
+    while(isFinished == false && IsValidVarFollow(currentChar))
     {
         result += currentChar;
         Advance();
@@ -124,7 +124,7 @@ TokenBase* Lexer::GetNextToken()
         // use this shitty way to avoid unwanted character in source code
         // the start of a string can only be letter or underline
         // this StringToken can be either a const string value, or a keyword
-        else if(isalpha(currentChar) || currentChar == '_')
+        else if(IsValidVarStart(currentChar))
         {
             return GetTokenById();
         }
@@ -202,6 +202,17 @@ bool Lexer::IsStringReservedKeyword(std::string _value)
 {
     // _value found in ReservedKeyWords
     return ReservedKeyWords.find(_value) != ReservedKeyWords.end();
+}
+
+bool Lexer::IsValidVarStart(char _char)
+{
+    // var can start with underline or english letters
+    return isalpha(_char) || (_char == '_');
+}
+// this fiunction needs to accept all characters the function IsValidVarStart accepts
+bool Lexer::IsValidVarFollow(char _char)
+{
+    return isalnum(_char) || (_char == '_');
 }
 
 // No need to call this TemporaryFunction() function,
