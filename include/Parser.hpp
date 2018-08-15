@@ -20,7 +20,7 @@ class CompoundNode final : public AST_Node
 public:
     CompoundNode(std::vector<AST_Node*> _childrenNodes);
 
-    virtual TokenBase* Visit();
+    virtual TokenBase* Visit() override;
 
 private:
     std::vector<AST_Node*> childrenNodes;
@@ -31,7 +31,7 @@ class BinaryOperator final : public AST_Node
 public:
     BinaryOperator(AST_Node* _left, TokenBase* _operatorToken, AST_Node* _right);
 
-    virtual TokenBase* Visit();
+    virtual TokenBase* Visit() override;
 
 private:
     AST_Node* left;
@@ -44,7 +44,7 @@ class UnaryOperator final : public AST_Node
 public:
     UnaryOperator(TokenBase* _operatorToken, AST_Node* _expr);
 
-    virtual TokenBase* Visit();
+    virtual TokenBase* Visit() override;
 
 private:
     AST_Node* expr;
@@ -56,7 +56,7 @@ class ValueNode final : public AST_Node
 public:
     ValueNode(TokenBase* _token);
 
-    virtual TokenBase* Visit();
+    virtual TokenBase* Visit() override;
 
 private:
     TokenBase* token;
@@ -68,7 +68,7 @@ class VariableNode final : public AST_Node
 public:
     VariableNode(TokenBase* _token);
 
-    virtual TokenBase* Visit();
+    virtual TokenBase* Visit() override;
     std::string GetVarName();
 
 private:
@@ -80,7 +80,7 @@ class AssignNode final : public AST_Node
 public:
     AssignNode(VariableNode* _variable, TokenBase* _operatorToken, AST_Node* _value);
 
-    virtual TokenBase* Visit();
+    virtual TokenBase* Visit() override;
 
 private:
     VariableNode* variable;
@@ -93,7 +93,7 @@ class NoOperationNode final : public AST_Node
 public:
     NoOperationNode();
 
-    virtual TokenBase* Visit();
+    virtual TokenBase* Visit() override;
 };
 
 class Parser final

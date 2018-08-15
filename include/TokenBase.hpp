@@ -72,14 +72,14 @@ public:
 
     friend class TokenFactory;
 
-    virtual ~IntegerToken() {}
+    virtual ~IntegerToken() override {}
 
-    virtual std::string ToString();
+    virtual std::string ToString() override;
 
-    virtual TokenBase* Add(TokenBase* token);
-    virtual TokenBase* Minus(TokenBase* token);
-    virtual TokenBase* Multiply(TokenBase* token);
-    virtual TokenBase* Divide(TokenBase* token);
+    virtual TokenBase* Add(TokenBase* token) override;
+    virtual TokenBase* Minus(TokenBase* token) override;
+    virtual TokenBase* Multiply(TokenBase* token) override;
+    virtual TokenBase* Divide(TokenBase* token) override;
 };
 
 class StringToken final : public TokenBase
@@ -89,17 +89,17 @@ private:
 public:
     friend class TokenFactory;
 
-    virtual ~StringToken() {}
+    virtual ~StringToken() override {}
 
-    virtual std::string ToString();
+    virtual std::string ToString() override;
 
-    virtual TokenBase* Add(TokenBase* token);
+    virtual TokenBase* Add(TokenBase* token) override;
     // string token do not support subtraction(minus operator)
-    virtual TokenBase* Minus(TokenBase* token);
+    virtual TokenBase* Minus(TokenBase* token) override;
     // string token do not support Multiply
-    virtual TokenBase* Multiply(TokenBase* token);
+    virtual TokenBase* Multiply(TokenBase* token) override;
     // string token do not support Divide
-    virtual TokenBase* Divide(TokenBase* token);
+    virtual TokenBase* Divide(TokenBase* token) override;
 };
 
 class EOF_Token final : public TokenBase
@@ -110,14 +110,14 @@ private:
 public:
     friend class TokenFactory;
 
-    virtual ~EOF_Token() {}
+    virtual ~EOF_Token() override {}
 
-    virtual std::string ToString();
+    virtual std::string ToString() override;
 
-    virtual TokenBase* Add(TokenBase* token);
-    virtual TokenBase* Minus(TokenBase* token);
-    virtual TokenBase* Multiply(TokenBase* token);
-    virtual TokenBase* Divide(TokenBase* token);
+    virtual TokenBase* Add(TokenBase* token) override;
+    virtual TokenBase* Minus(TokenBase* token) override;
+    virtual TokenBase* Multiply(TokenBase* token) override;
+    virtual TokenBase* Divide(TokenBase* token) override;
 };
 
 #endif
