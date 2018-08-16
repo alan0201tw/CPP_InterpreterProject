@@ -4,8 +4,10 @@ StringToken::StringToken(std::string _value)
 {
     // IMPORTANT : this local tmpVar need to be new-ed, otherwise the same address might
     // be used accross multiple constructor, makeing data corrupted
-    std::string* tmpVar = new std::string(_value);
-    data = (void*)tmpVar;
+    //std::string* tmpVar = new std::string(_value);
+    //data = (void*)tmpVar;
+
+    data.stringData = _value;
 
     valueType = TokenValueType::String;
 
@@ -16,7 +18,7 @@ std::string StringToken::ToString()
 {
     std::stringstream s;
     // don't use + operator!
-    std::string myString = *((std::string*)GetData());
+    std::string myString = this->GetStringData();
     s << "StringToken with data = " << myString;
 
     return s.str();
@@ -30,10 +32,10 @@ TokenBase* StringToken::Add(TokenBase* token)
     {
         case TokenValueType::Integer:
         {
-            int otherInt = *((int*)token->GetData());
+            int otherInt = token->GetIntData();
             std::string otherString = std::to_string(otherInt);
             
-            std::string myString = *((std::string*)GetData());
+            std::string myString = this->GetStringData();
 
             std::string result = myString + otherString;
 
@@ -41,8 +43,8 @@ TokenBase* StringToken::Add(TokenBase* token)
         }
         case TokenValueType::String:
         {
-            std::string otherString = *((std::string*)token->GetData());
-            std::string myString = *((std::string*)GetData());
+            std::string otherString = token->GetStringData();
+            std::string myString = this->GetStringData();
             
             std::string result = myString + otherString;
 
@@ -71,9 +73,9 @@ TokenBase* StringToken::Multiply(TokenBase* token)
         case TokenValueType::Integer:
         {
             std::string result = "";
-            std::string myString = *((std::string*)GetData());
+            std::string myString = this->GetStringData();
 
-            int otherInt = *((int*)token->GetData());
+            int otherInt = token->GetIntData();
             if(otherInt < 0)
             {
                 std::cout << "StringToken using * operator with negative Integer" << std::endl;

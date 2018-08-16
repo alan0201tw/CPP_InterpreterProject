@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include <string>
+#include <string.h>
 //debugging
 #include <iostream>
 
@@ -37,24 +38,38 @@ enum class TokenValueType : unsigned short int
     EOF_Token
 };
 
+union GeneralData
+{
+    int intData;
+    double doubleData;
+    std::string stringData;
+    // this is super important
+    GeneralData()
+    {
+        memset( this, 0, sizeof( GeneralData ) );
+    }
+    ~GeneralData() {}
+};
+
 class TokenBase
 {
 protected:
-    void* data;
+    GeneralData data;
     TokenValueType valueType;
     
 public:
-
-    void* GetData()
-    {
-        return data;
-    }
-    TokenValueType GetValueType()
-    {
-        return valueType;
-    }
     // for safe deleting tokens
     virtual ~TokenBase() {};
+
+    // expose data as readonly property
+    int GetIntData() { return data.intData; }
+    double GetDoubleData() { return data.doubleData; }
+    std::string GetStringData() { return data.stringData; }
+
+    // provide a method for external reading of each token's value type
+    // but no need to save it as a member since each class maps to a specific value type,
+    // we can just provide an interface to make each actual token implements it.
+    virtual TokenValueType GetValueType() = 0;
 
     virtual std::string ToString() = 0;
     virtual TokenBase* Add(TokenBase* token) = 0;
@@ -74,6 +89,11 @@ public:
 
     virtual ~IntegerToken() override {}
 
+    virtual TokenValueType GetValueType() override
+    { 
+        return TokenValueType::Integer;
+    }
+
     virtual std::string ToString() override;
 
     virtual TokenBase* Add(TokenBase* token) override;
@@ -91,14 +111,16 @@ public:
 
     virtual ~StringToken() override {}
 
+    virtual TokenValueType GetValueType() override
+    { 
+        return TokenValueType::String;
+    }
+
     virtual std::string ToString() override;
 
     virtual TokenBase* Add(TokenBase* token) override;
-    // string token do not support subtraction(minus operator)
     virtual TokenBase* Minus(TokenBase* token) override;
-    // string token do not support Multiply
     virtual TokenBase* Multiply(TokenBase* token) override;
-    // string token do not support Divide
     virtual TokenBase* Divide(TokenBase* token) override;
 };
 
@@ -111,6 +133,11 @@ public:
     friend class TokenFactory;
 
     virtual ~EOF_Token() override {}
+
+    virtual TokenValueType GetValueType() override
+    { 
+        return TokenValueType::EOF_Token;
+    }
 
     virtual std::string ToString() override;
 

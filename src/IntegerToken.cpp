@@ -4,8 +4,10 @@ IntegerToken::IntegerToken(int _value)
 {
     // IMPORTANT : this local tmpVar need to be new-ed, otherwise the same address might
     // be used accross multiple constructor, makeing data corrupted
-    int* tmpVar = new int(_value);
-    data = (void*)tmpVar;
+    //int* tmpVar = new int(_value);
+    //data = (void*)tmpVar;
+
+    data.intData = _value;
 
     valueType = TokenValueType::Integer;
 
@@ -16,9 +18,9 @@ std::string IntegerToken::ToString()
 {
     std::stringstream s;
     // don't use + operator!
-    int myInt = *((int*)GetData());
+    //int myInt = *((int*)GetData());
 
-    s << "IntegerToken with data = " << myInt;
+    s << "IntegerToken with data = " << data.intData;
 
     return s.str();
 }
@@ -31,8 +33,8 @@ TokenBase* IntegerToken::Add(TokenBase* token)
     {
         case TokenValueType::Integer:
         {
-            int otherInt = *((int*)token->GetData());
-            int myInt = *((int*)GetData());
+            int otherInt = token->GetIntData();
+            int myInt = this->GetIntData();
             
             int result = myInt + otherInt;
 
@@ -40,9 +42,9 @@ TokenBase* IntegerToken::Add(TokenBase* token)
         }
         case TokenValueType::String:
         {
-            std::string otherString = *((std::string*)token->GetData());
+            std::string otherString = token->GetStringData();
 
-            int myInt = *((int*)GetData());
+            int myInt = this->GetIntData();
             std::string myString = std::to_string(myInt);
             
             std::string result = myString + otherString;
@@ -67,8 +69,8 @@ TokenBase* IntegerToken::Minus(TokenBase* token)
     {
         case TokenValueType::Integer:
         {
-            int otherInt = *((int*)token->GetData());
-            int myInt = *((int*)GetData());
+            int otherInt = token->GetIntData();
+            int myInt = this->GetIntData();
             
             int result = myInt - otherInt;
 
@@ -90,8 +92,8 @@ TokenBase* IntegerToken::Multiply(TokenBase* token)
     {
         case TokenValueType::Integer:
         {
-            int otherInt = *((int*)token->GetData());
-            int myInt = *((int*)GetData());
+            int otherInt = token->GetIntData();
+            int myInt = this->GetIntData();
             
             int result = myInt * otherInt;
 
@@ -99,7 +101,7 @@ TokenBase* IntegerToken::Multiply(TokenBase* token)
         }
         case TokenValueType::String:
         {
-            std::string result = *((std::string*)token->Multiply(this)->GetData());
+            std::string result = token->Multiply(this)->GetStringData();
             return TokenFactory::MakeToken(result);
         }
         default:
@@ -118,8 +120,8 @@ TokenBase* IntegerToken::Divide(TokenBase* token)
     {
         case TokenValueType::Integer:
         {
-            int otherInt = *((int*)token->GetData());
-            int myInt = *((int*)GetData());
+            int otherInt = token->GetIntData();
+            int myInt = this->GetIntData();
             
             int result = myInt / otherInt;
 

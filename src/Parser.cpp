@@ -143,13 +143,13 @@ VariableNode::VariableNode(TokenBase* _token)
 
 std::string VariableNode::GetVarName()
 {
-    std::string varName = *(std::string*)token->GetData();
+    std::string varName = token->GetStringData();
     return varName;
 }
 
 TokenBase* VariableNode::Visit()
 {
-    std::string varName = *(std::string*)token->GetData();
+    std::string varName = token->GetStringData();
     // not found
     if(Parser::variablesMap.find(varName) == Parser::variablesMap.end())
     {
@@ -202,7 +202,7 @@ void Parser::Eat(TokenValueType tokenType, std::string _specialChar)
         // if the current token is a string token, need to further compare actual data
         if(valueType == TokenValueType::String)
         {
-            std::string tokenStringData = *(std::string*)currentToken->GetData();
+            std::string tokenStringData = currentToken->GetStringData();
             // the content is the same, or specialChar is empty, 
             // in this case, don't do special character check
             if( tokenStringData.compare(_specialChar) == 0 || _specialChar.empty())
@@ -344,7 +344,7 @@ AST_Node* Parser::Factor()
     else if(valueType == TokenValueType::String)
     {
         // this factor is an ( Expr )
-        std::string stringData = *(std::string*)currentToken->GetData();
+        std::string stringData = currentToken->GetStringData();
         if(stringData.compare("(") == 0)
         {
             Eat(TokenValueType::String, "(");
@@ -444,7 +444,7 @@ bool Parser::IsStringTokenSame(TokenBase* token, std::string _value)
     if(token->GetValueType() != TokenValueType::String)
         return false;
 
-    std::string stringData = *(std::string*)token->GetData();
+    std::string stringData = token->GetStringData();
     if(stringData.compare(_value) == 0)
     {
         return true;
@@ -463,7 +463,7 @@ std::string Parser::GetStringTokenValue(TokenBase* token)
             "Parser::GetStringTokenValue : TokenValueType is not string"));
     }
 
-    std::string stringData = *(std::string*)token->GetData();
+    std::string stringData = token->GetStringData();
 
     return stringData;
 }
