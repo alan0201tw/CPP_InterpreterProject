@@ -3,7 +3,7 @@
 
 #include <sstream>
 #include <string>
-#include <string.h>
+#include <cstring>
 //debugging
 #include <iostream>
 
@@ -46,7 +46,7 @@ union GeneralData
     // this is super important
     GeneralData()
     {
-        memset( this, 0, sizeof( GeneralData ) );
+        std::memset(this, 0, sizeof(GeneralData));
     }
     ~GeneralData() {}
 };

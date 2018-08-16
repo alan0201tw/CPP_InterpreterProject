@@ -48,4 +48,10 @@ int main(int argc, char* argv[])
     {
         std::cout << it->first << " : " << it->second->ToString() << std::endl;
     }
+    /*
+    cout << "sizeof(GeneralData) = " << sizeof(GeneralData) << endl;
+    cout << "sizeof(string) = " << sizeof(std::string) << endl;
+    std::string sss = "ewl;khgvo;rngvouasnrvoberougvnoegbv;soebvoe";
+    cout << "sizeof(sss) = " << sizeof(sss) << endl;
+    */
 }
